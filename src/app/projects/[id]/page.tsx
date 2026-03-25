@@ -128,8 +128,56 @@ export default async function ProjectDetailPage({
                     href={`/issues/${issue.id}`}
                     className="block p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
+                    <div className="flex items-start gap-4">
+                      {/* Avatars */}
+                      <div className="flex-shrink-0 flex gap-2">
+                        {/* Reporter Avatar */}
+                        {issue.reporter?.avatar_url ? (
+                          <img
+                            src={issue.reporter.avatar_url}
+                            alt={issue.reporter.name}
+                            title={`Reporter: ${issue.reporter.name}`}
+                            className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-700"
+                          />
+                        ) : (
+                          <div
+                            className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 font-semibold"
+                            title={issue.reporter ? `Reporter: ${issue.reporter.name}` : 'Unknown'}
+                          >
+                            {issue.reporter?.name?.charAt(0).toUpperCase() || '?'}
+                          </div>
+                        )}
+                        {/* Assignee Avatar */}
+                        {issue.assignee ? (
+                          issue.assignee.avatar_url ? (
+                            <img
+                              src={issue.assignee.avatar_url}
+                              alt={issue.assignee.name}
+                              title={`Assignee: ${issue.assignee.name}`}
+                              className="w-10 h-10 rounded-full border-2 border-green-200 dark:border-green-700"
+                            />
+                          ) : (
+                            <div
+                              className="w-10 h-10 rounded-full bg-green-200 dark:bg-green-800 flex items-center justify-center text-green-700 dark:text-green-300 font-semibold"
+                              title={`Assignee: ${issue.assignee.name}`}
+                            >
+                              {issue.assignee.name.charAt(0).toUpperCase()}
+                            </div>
+                          )
+                        ) : (
+                          <div
+                            className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500"
+                            title="Unassigned"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
                         {issue.description && (
                           <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">

@@ -104,27 +104,86 @@ export default async function IssueDetailPage({
             </div>
           </div>
 
-          {/* Metadata */}
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300">
-            <div>
-              <span className="font-medium">Project:</span>{' '}
-              <Link href={`/projects/${issue.project.id}`} className="text-blue-600 hover:underline">
-                {issue.project.name}
-              </Link>
-            </div>
-            <div>
-              <span className="font-medium">Reporter:</span> {issue.reporter.name}
-            </div>
-            {issue.assignee && (
-              <div>
-                <span className="font-medium">Assignee:</span> {issue.assignee.name}
+          {/* Issue Info Card */}
+          <Card>
+            <CardContent className="py-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Reporter */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    {issue.reporter.avatar_url ? (
+                      <img
+                        src={issue.reporter.avatar_url}
+                        alt={issue.reporter.name}
+                        className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 font-semibold text-lg">
+                        {issue.reporter.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase">Reporter</div>
+                    <div className="font-medium text-gray-900 dark:text-white truncate">{issue.reporter.name}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300 truncate">{issue.reporter.email}</div>
+                  </div>
+                </div>
+
+                {/* Assignee */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    {issue.assignee ? (
+                      issue.assignee.avatar_url ? (
+                        <img
+                          src={issue.assignee.avatar_url}
+                          alt={issue.assignee.name}
+                          className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 font-semibold text-lg">
+                          {issue.assignee.name.charAt(0).toUpperCase()}
+                        </div>
+                      )
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase">Assignee</div>
+                    {issue.assignee ? (
+                      <>
+                        <div className="font-medium text-gray-900 dark:text-white truncate">{issue.assignee.name}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300 truncate">{issue.assignee.email}</div>
+                      </>
+                    ) : (
+                      <div className="text-gray-500 dark:text-gray-400 italic">Unassigned</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Project & Status */}
+                <div>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase mb-1">Project</div>
+                      <Link href={`/projects/${issue.project.id}`} className="text-primary-600 hover:text-primary-700 dark:text-primary-400 font-medium">
+                        {issue.project.name}
+                      </Link>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase mb-1">Created</div>
+                      <div className="text-gray-900 dark:text-white">{new Date(issue.created_at).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
-            <div>
-              <span className="font-medium">Created:</span>{' '}
-              {new Date(issue.created_at).toLocaleDateString()}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Description */}

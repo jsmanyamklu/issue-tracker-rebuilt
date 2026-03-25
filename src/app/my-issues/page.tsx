@@ -148,10 +148,30 @@ function IssueCard({ issue }: { issue: any }) {
       href={`/issues/${issue.id}`}
       className="block p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
+      <div className="flex items-start gap-4">
+        {/* Reporter Avatar */}
+        <div className="flex-shrink-0">
+          {issue.reporter?.avatar_url ? (
+            <img
+              src={issue.reporter.avatar_url}
+              alt={issue.reporter.name}
+              title={`Reporter: ${issue.reporter.name}`}
+              className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-700"
+            />
+          ) : (
+            <div
+              className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 font-semibold"
+              title={issue.reporter ? `Reporter: ${issue.reporter.name}` : 'Unknown'}
+            >
+              {issue.reporter?.name?.charAt(0).toUpperCase() || '?'}
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-gray-500 dark:text-gray-300">{issue.project?.name || 'Unknown Project'}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{issue.project?.name || 'Unknown Project'}</span>
           </div>
           <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
           {issue.description && (
@@ -170,6 +190,9 @@ function IssueCard({ issue }: { issue: any }) {
               {issue.priority}
             </Badge>
             <Badge variant="info">{issue.type}</Badge>
+            <Badge variant={issue.status === 'open' ? 'warning' : issue.status === 'in_progress' ? 'info' : 'success'}>
+              {issue.status.replace('_', ' ')}
+            </Badge>
           </div>
         </div>
       </div>
