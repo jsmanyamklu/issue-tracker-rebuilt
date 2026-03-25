@@ -45,8 +45,8 @@ export default async function ProjectsPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-            <p className="mt-2 text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">
               Manage your projects and track issues
             </p>
           </div>
@@ -122,7 +122,7 @@ export default async function ProjectsPage() {
                       );
                     })()}
 
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <span>Owner: {project.owner?.name || 'Unknown'}</span>
                     </div>
                     <div className="mt-2 text-xs text-gray-400">

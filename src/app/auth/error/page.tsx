@@ -58,7 +58,7 @@ export default function AuthErrorPage() {
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               Authentication Error
             </h1>
-            <p className="text-gray-600">{errorMessage}</p>
+            <p className="text-gray-600 dark:text-gray-300">{errorMessage}</p>
           </div>
 
           {/* Actions */}

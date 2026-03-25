@@ -82,7 +82,7 @@ export default function EditProjectPage({
           <Card>
             <CardContent>
               <div className="text-center py-12">
-                <p className="text-gray-500">Loading project...</p>
+                <p className="text-gray-500 dark:text-gray-400">Loading project...</p>
               </div>
             </CardContent>
           </Card>

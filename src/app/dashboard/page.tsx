@@ -44,12 +44,12 @@ export default async function DashboardPage() {
   const { summary, recentIssues, projects } = await getDashboardData(user.id);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-gray-600">Welcome back, {user.name}!</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Welcome back, {user.name}!</p>
         </div>
 
         {/* Stats Grid */}
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
               <div className="text-3xl font-bold text-primary-600">
                 {summary.assignedToMe || 0}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Assigned to Me</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Assigned to Me</div>
             </CardContent>
           </Card>
           <Card>
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
               <div className="text-3xl font-bold text-green-600">
                 {summary.reportedByMe || 0}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Reported by Me</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Reported by Me</div>
             </CardContent>
           </Card>
           <Card>
@@ -75,15 +75,15 @@ export default async function DashboardPage() {
               <div className="text-3xl font-bold text-blue-600">
                 {summary.openIssues || 0}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Open Issues</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Open Issues</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="text-center">
-              <div className="text-3xl font-bold text-gray-600">
+              <div className="text-3xl font-bold text-gray-600 dark:text-gray-300">
                 {summary.closedIssues || 0}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Closed Issues</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Closed Issues</div>
             </CardContent>
           </Card>
         </div>
@@ -101,11 +101,11 @@ export default async function DashboardPage() {
                     <Link
                       key={issue.id}
                       href={`/issues/${issue.id}`}
-                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{issue.title}</h4>
+                          <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge variant={issue.priority === 'critical' || issue.priority === 'high' ? 'danger' : 'default'}>
                               {issue.priority}
@@ -154,11 +154,11 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={`/projects/${project.id}`}
-                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors"
                     >
-                      <h4 className="font-medium text-gray-900">{project.name}</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-white">{project.name}</h4>
                       {project.description && (
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-1">
                           {project.description}
                         </p>
                       )}

@@ -86,7 +86,7 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Keyboard-First UX
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Navigate faster with keyboard shortcuts. Press{' '}
               <kbd className="px-1.5 py-0.5 text-xs font-semibold bg-gray-100 border rounded">?</kbd>{' '}
               to see all shortcuts. 10x faster than mouse.
@@ -112,7 +112,7 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Project Management
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Organize issues into projects. Track progress, assign tasks, and
               collaborate with your team.
             </p>
@@ -137,7 +137,7 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               AI-Powered Insights
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Automatic issue classification, root cause analysis, and similar
               issue detection using AI.
             </p>
@@ -162,7 +162,7 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Clean Architecture
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Built with clean architecture principles. No vendor lock-in, full
               control over your code.
             </p>
@@ -187,7 +187,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="border-t mt-32 py-8 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600 dark:text-gray-300">
           <p>© 2026 TaskForge. Built with clean architecture principles.</p>
         </div>
       </footer>

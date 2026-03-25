@@ -93,7 +93,7 @@ export default async function IssueDetailPage({
                   {issue.type.toUpperCase()}
                 </Badge>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">{issue.title}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{issue.title}</h1>
             </div>
             <div className="flex gap-2">
               {(isReporter || isAssignee) && (
@@ -105,7 +105,7 @@ export default async function IssueDetailPage({
           </div>
 
           {/* Metadata */}
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+          <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300">
             <div>
               <span className="font-medium">Project:</span>{' '}
               <Link href={`/projects/${issue.project.id}`} className="text-blue-600 hover:underline">
@@ -164,8 +164,8 @@ export default async function IssueDetailPage({
                       )}
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-gray-900">{comment.user.name}</span>
-                          <span className="text-sm text-gray-500">
+                          <span className="font-medium text-gray-900 dark:text-white">{comment.user.name}</span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
                             {new Date(comment.created_at).toLocaleDateString()}
                           </span>
                         </div>

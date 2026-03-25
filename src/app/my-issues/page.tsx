@@ -39,8 +39,8 @@ export default async function MyIssuesPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Issues</h1>
-          <p className="mt-2 text-gray-600">Issues assigned to you</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Issues</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Issues assigned to you</p>
         </div>
 
         {/* Stats */}
@@ -50,7 +50,7 @@ export default async function MyIssuesPage() {
               <div className="text-2xl font-bold text-yellow-600">
                 {groupedIssues.open.length}
               </div>
-              <div className="text-sm text-gray-600">Open</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
             </CardContent>
           </Card>
           <Card>
@@ -58,7 +58,7 @@ export default async function MyIssuesPage() {
               <div className="text-2xl font-bold text-blue-600">
                 {groupedIssues.inProgress.length}
               </div>
-              <div className="text-sm text-gray-600">In Progress</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
             </CardContent>
           </Card>
           <Card>
@@ -66,15 +66,15 @@ export default async function MyIssuesPage() {
               <div className="text-2xl font-bold text-green-600">
                 {groupedIssues.resolved.length}
               </div>
-              <div className="text-sm text-gray-600">Resolved</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-gray-600">
+              <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">
                 {groupedIssues.closed.length}
               </div>
-              <div className="text-sm text-gray-600">Closed</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
             </CardContent>
           </Card>
         </div>
@@ -133,7 +133,7 @@ export default async function MyIssuesPage() {
         ) : (
           <Card>
             <CardContent className="text-center py-12">
-              <p className="text-gray-500">No issues assigned to you</p>
+              <p className="text-gray-500 dark:text-gray-400">No issues assigned to you</p>
             </CardContent>
           </Card>
         )}
@@ -146,14 +146,14 @@ function IssueCard({ issue }: { issue: any }) {
   return (
     <Link
       href={`/issues/${issue.id}`}
-      className="block p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+      className="block p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 dark:border-gray-700"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-gray-500">{issue.project?.name || 'Unknown Project'}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{issue.project?.name || 'Unknown Project'}</span>
           </div>
-          <h4 className="font-medium text-gray-900">{issue.title}</h4>
+          <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
           {issue.description && (
             <p className="text-sm text-gray-600 mt-1 line-clamp-2">
               {issue.description}

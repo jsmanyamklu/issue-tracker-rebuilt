@@ -59,8 +59,8 @@ export default async function ProjectDetailPage({
         <div className="mb-8">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
-              <p className="mt-2 text-gray-600">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{project.name}</h1>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">
                 Owner: {project.owner?.name || 'Unknown'}
               </p>
             </div>
@@ -76,7 +76,7 @@ export default async function ProjectDetailPage({
             </div>
           </div>
           {project.description && (
-            <p className="text-gray-700">{project.description}</p>
+            <p className="text-gray-700 dark:text-gray-200">{project.description}</p>
           )}
         </div>
 
@@ -85,31 +85,31 @@ export default async function ProjectDetailPage({
           <Card>
             <CardContent className="text-center py-4">
               <div className="text-2xl font-bold">{stats.total}</div>
-              <div className="text-sm text-gray-600">Total</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Total</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="text-center py-4">
               <div className="text-2xl font-bold text-yellow-600">{stats.open}</div>
-              <div className="text-sm text-gray-600">Open</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="text-center py-4">
               <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
-              <div className="text-sm text-gray-600">In Progress</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="text-center py-4">
               <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
-              <div className="text-sm text-gray-600">Resolved</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-gray-600">{stats.closed}</div>
-              <div className="text-sm text-gray-600">Closed</div>
+              <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.closed}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
             </CardContent>
           </Card>
         </div>
@@ -126,11 +126,11 @@ export default async function ProjectDetailPage({
                   <Link
                     key={issue.id}
                     href={`/issues/${issue.id}`}
-                    className="block p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+                    className="block p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 dark:border-gray-700"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{issue.title}</h4>
+                        <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
                         {issue.description && (
                           <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                             {issue.description}

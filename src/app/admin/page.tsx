@@ -94,7 +94,7 @@ export default function AdminPage() {
           <Card>
             <CardContent>
               <div className="text-center py-12">
-                <p className="text-gray-500">Loading users...</p>
+                <p className="text-gray-500 dark:text-gray-400">Loading users...</p>
               </div>
             </CardContent>
           </Card>
@@ -108,8 +108,8 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-          <p className="mt-2 text-gray-600">Manage user roles and permissions</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Manage user roles and permissions</p>
         </div>
 
         {error && (
@@ -171,7 +171,7 @@ export default function AdminPage() {
               {users.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-gray-900"
                 >
                   <div className="flex items-center gap-4 flex-1">
                     {user.avatar_url && (
@@ -182,8 +182,8 @@ export default function AdminPage() {
                       />
                     )}
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{user.name}</h3>
-                      <p className="text-sm text-gray-600">{user.email}</p>
+                      <h3 className="font-medium text-gray-900 dark:text-white">{user.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
                     </div>
                     <Badge variant={getRoleBadgeVariant(user.role)}>
                       {getRoleName(user.role)}
@@ -205,7 +205,7 @@ export default function AdminPage() {
                       <option value={UserRole.VIEWER}>Viewer</option>
                     </select>
                     {updatingUserId === user.id && (
-                      <span className="text-sm text-gray-500">Updating...</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Updating...</span>
                     )}
                   </div>
                 </div>

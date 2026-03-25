@@ -21,8 +21,8 @@ export default async function RootLayout({
   const session = await getSession();
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} h-full bg-gray-50 dark:bg-gray-900 transition-colors`}>
         <Providers session={session}>
           <Navigation />
           <KeyboardShortcuts />

@@ -114,8 +114,8 @@ export default function IssuesPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Issues</h1>
-            <p className="mt-2 text-gray-600">Track and manage all issues</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Issues</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">Track and manage all issues</p>
           </div>
           <Link href="/issues/new">
             <Button>+ New Issue</Button>
@@ -231,7 +231,7 @@ export default function IssuesPage() {
         </Card>
 
         {/* Results Count */}
-        <div className="mb-4 text-sm text-gray-600">
+        <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
           Showing {filteredIssues.length} of {issues.length} issues
         </div>
 
@@ -248,7 +248,7 @@ export default function IssuesPage() {
         {isLoading ? (
           <Card>
             <CardContent className="py-12">
-              <div className="text-center text-gray-500">Loading issues...</div>
+              <div className="text-center text-gray-500 dark:text-gray-400">Loading issues...</div>
             </CardContent>
           </Card>
         ) : (
@@ -279,7 +279,7 @@ export default function IssuesPage() {
                                 {issue.description}
                               </p>
                             )}
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                               <div>
                                 <span className="font-medium">Project:</span>{' '}
                                 {issue.project.name}
