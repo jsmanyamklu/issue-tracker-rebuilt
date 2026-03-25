@@ -14,6 +14,7 @@ export default function NewProjectPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    due_date: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,6 +76,16 @@ export default function NewProjectPage() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={4}
+              />
+
+              <Input
+                label="Project Deadline (Optional)"
+                type="datetime-local"
+                value={formData.due_date}
+                onChange={(e) =>
+                  setFormData({ ...formData, due_date: e.target.value })
+                }
+                helperText="Overall project completion target date"
               />
 
               <div className="flex gap-4">

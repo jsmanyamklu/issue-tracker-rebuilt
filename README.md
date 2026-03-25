@@ -43,15 +43,16 @@ TaskForge is a **production-grade issue tracking system** designed for modern de
 ## ✨ Key Features
 
 ### Core Functionality
-- ✅ **Project Management** - Create and manage multiple projects
-- ✅ **Issue Tracking** - Full CRUD operations with rich metadata
+- ✅ **Project Management** - Create, edit, and delete projects with deadlines
+- ✅ **Issue Tracking** - Full CRUD operations with rich metadata and due dates
 - ✅ **User Management** - Complete authentication and profile management
 - ✅ **Comments System** - Threaded discussions with full timestamps
-- ✅ **Activity Timeline** - Full audit trail of all changes
+- ✅ **Activity Timeline** - Comprehensive audit trail with AI-powered insights
+- ✅ **Analytics Dashboard** - Team performance metrics and AI recommendations
 
 ### Advanced Features
 - 🎯 **Role-Based Access Control** (RBAC)
-  - Admin, Manager, and User roles
+  - Admin, Manager, Developer, and Viewer roles
   - Granular permissions system
   - Project ownership controls
 
@@ -68,10 +69,21 @@ TaskForge is a **production-grade issue tracking system** designed for modern de
   - Client-side search in title/description
 
 - ⏰ **Due Date Management**
-  - Issue due dates with past date validation
-  - Overdue tracking and alerts
+  - Issue-level due dates with past date validation
+  - **Project-level deadlines** - Track overall project completion targets
+  - Overdue tracking and alerts for both issues and projects
   - Visual indicators with pulsing badges
-  - Days overdue calculation and display
+  - Risk detection (warns if issues extend beyond project deadline)
+  - Days overdue/remaining calculation and display
+
+- 🤖 **Activity Logging & AI Analytics**
+  - Comprehensive audit trail of all system activities
+  - Issue, project, and comment activity tracking
+  - AI-powered insights using Anthropic Claude
+  - Pattern detection and bottleneck identification
+  - Predictive analytics for overdue risks
+  - Performance metrics and team analytics
+  - Admin/Manager dashboard with detailed metrics
 
 - 🔔 **Notification System**
   - Email notifications via Nodemailer
@@ -113,11 +125,12 @@ TaskForge is a **production-grade issue tracking system** designed for modern de
 ### Backend
 - **Runtime**: Node.js 20+
 - **Framework**: Next.js API Routes & Server Actions
-- **Database**: PostgreSQL 14+
+- **Database**: PostgreSQL 16+
 - **ORM**: Raw SQL with pg (node-postgres)
 - **Authentication**: NextAuth.js v4
 - **Email**: Nodemailer
 - **Notifications**: Slack API & Webhooks
+- **AI**: Anthropic Claude API (Sonnet 4)
 
 ### Development
 - **Package Manager**: npm
@@ -174,6 +187,9 @@ SMTP_PASSWORD=your-app-password
 # Slack (Optional)
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
 SLACK_DEFAULT_CHANNEL=#issue-tracker
+
+# AI Analytics (Optional)
+ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 4. **Set up the database**
@@ -350,12 +366,12 @@ issue-tracker-rebuilt/
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design
 - **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** - API reference
 - **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Setup instructions
-- **[USER_GUIDE.md](USER_GUIDE.md)** - End-user docs
+- **[ACTIVITY_LOGGING_AI_ANALYTICS_DESIGN.md](ACTIVITY_LOGGING_AI_ANALYTICS_DESIGN.md)** - Activity logging & AI features
 - **[RBAC-SYSTEM.md](RBAC-SYSTEM.md)** - Access control
 - **[EMAIL_SETUP.md](EMAIL_SETUP.md)** - Email config
 - **[SLACK_SETUP.md](SLACK_SETUP.md)** - Slack integration
 - **[DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)** - Database structure
-- **[TESTING_REPORT.md](TESTING_REPORT.md)** - Test results
+- **[TEST_EXECUTION_RESULTS.md](TEST_EXECUTION_RESULTS.md)** - Test execution log
 
 ---
 

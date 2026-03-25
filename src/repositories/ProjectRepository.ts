@@ -104,10 +104,10 @@ export class ProjectRepository {
   async create(data: CreateProjectDTO): Promise<Project> {
     try {
       const result = await query<Project>(
-        `INSERT INTO projects (name, description, owner_id)
-         VALUES ($1, $2, $3)
+        `INSERT INTO projects (name, description, owner_id, due_date)
+         VALUES ($1, $2, $3, $4)
          RETURNING *`,
-        [data.name, data.description, data.owner_id]
+        [data.name, data.description, data.owner_id, data.due_date || null]
       );
       return result.rows[0];
     } catch (error) {
@@ -124,10 +124,11 @@ export class ProjectRepository {
         `UPDATE projects
          SET name = COALESCE($1, name),
              description = COALESCE($2, description),
+             due_date = CASE WHEN $3::text = 'null' THEN NULL ELSE COALESCE($3::timestamp, due_date) END,
              updated_at = CURRENT_TIMESTAMP
-         WHERE id = $3
+         WHERE id = $4
          RETURNING *`,
-        [data.name, data.description, id]
+        [data.name, data.description, data.due_date, id]
       );
       return result.rows[0];
     } catch (error) {

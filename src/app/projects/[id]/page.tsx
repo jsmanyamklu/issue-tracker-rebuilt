@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { notFound } from 'next/navigation';
 import { projectService, issueService } from '@/services';
+import { DeleteProjectButton } from '@/components/projects/DeleteProjectButton';
 
 async function getProject(id: string) {
   try {
@@ -43,6 +44,8 @@ export default async function ProjectDetailPage({
   }
 
   const isOwner = project.owner_id === user.id;
+  const isAdmin = user.role === 'admin';
+  const canDelete = isOwner || isAdmin;
 
   // Calculate overdue issues
   const today = new Date();
@@ -84,11 +87,85 @@ export default async function ProjectDetailPage({
                   <Button variant="secondary">Edit Project</Button>
                 </Link>
               )}
+              {canDelete && (
+                <DeleteProjectButton projectId={project.id} projectName={project.name} />
+              )}
             </div>
           </div>
           {project.description && (
             <p className="text-gray-700 dark:text-gray-300">{project.description}</p>
           )}
+
+          {/* Project Deadline */}
+          {project.due_date && (() => {
+            const dueDate = new Date(project.due_date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const isOverdue = dueDate < today;
+            const daysUntil = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+            // Check if any issues are due after project deadline
+            const issuesAfterDeadline = issues.filter((i: any) =>
+              i.due_date && new Date(i.due_date) > dueDate
+            );
+
+            let statusColor = 'green';
+            let statusText = 'On Track';
+            let statusEmoji = '🟢';
+
+            if (isOverdue) {
+              statusColor = 'red';
+              statusText = 'Overdue';
+              statusEmoji = '🔴';
+            } else if (issuesAfterDeadline.length > 0) {
+              statusColor = 'yellow';
+              statusText = 'At Risk';
+              statusEmoji = '🟡';
+            } else if (daysUntil <= 7) {
+              statusColor = 'orange';
+              statusText = 'Due Soon';
+              statusEmoji = '🟠';
+            }
+
+            return (
+              <div className={`mt-4 p-4 rounded-lg border-2 ${
+                statusColor === 'red' ? 'bg-red-50 dark:bg-red-900/20 border-red-500' :
+                statusColor === 'yellow' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500' :
+                statusColor === 'orange' ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500' :
+                'bg-green-50 dark:bg-green-900/20 border-green-500'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{statusEmoji}</span>
+                    <div>
+                      <div className="font-semibold text-gray-900 dark:text-white">
+                        Project Deadline: {dueDate.toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </div>
+                      <div className={`text-sm ${
+                        statusColor === 'red' ? 'text-red-700 dark:text-red-300' :
+                        statusColor === 'yellow' ? 'text-yellow-700 dark:text-yellow-300' :
+                        statusColor === 'orange' ? 'text-orange-700 dark:text-orange-300' :
+                        'text-green-700 dark:text-green-300'
+                      }`}>
+                        {statusText}
+                        {!isOverdue && ` - ${daysUntil} day${daysUntil !== 1 ? 's' : ''} remaining`}
+                        {isOverdue && ` - ${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''} overdue`}
+                      </div>
+                    </div>
+                  </div>
+                  {issuesAfterDeadline.length > 0 && (
+                    <div className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">
+                      ⚠️ {issuesAfterDeadline.length} issue{issuesAfterDeadline.length !== 1 ? 's' : ''} due after project deadline
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Stats */}
@@ -173,16 +250,16 @@ export default async function ProjectDetailPage({
                           issue.assignee.avatar_url ? (
                             <img
                               src={issue.assignee.avatar_url}
-                              alt={issue.assignee.name}
-                              title={`Assignee: ${issue.assignee.name}`}
+                              alt={issue.assignee.name || 'Assignee'}
+                              title={`Assignee: ${issue.assignee.name || 'Unknown'}`}
                               className="w-10 h-10 rounded-full border-2 border-green-200 dark:border-green-700"
                             />
                           ) : (
                             <div
                               className="w-10 h-10 rounded-full bg-green-200 dark:bg-green-800 flex items-center justify-center text-green-700 dark:text-green-300 font-semibold"
-                              title={`Assignee: ${issue.assignee.name}`}
+                              title={`Assignee: ${issue.assignee.name || 'Unknown'}`}
                             >
-                              {issue.assignee.name.charAt(0).toUpperCase()}
+                              {(issue.assignee.name || 'U').charAt(0).toUpperCase()}
                             </div>
                           )
                         ) : (

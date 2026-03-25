@@ -138,15 +138,15 @@ export function KanbanBoard({ issues, onStatusChange }: KanbanBoardProps) {
                         {issue.assignee.avatar_url ? (
                           <img
                             src={issue.assignee.avatar_url}
-                            alt={issue.assignee.name}
+                            alt={issue.assignee.name || 'Assignee'}
                             className="w-5 h-5 rounded-full"
                           />
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-primary-200 dark:bg-primary-800 flex items-center justify-center text-primary-700 dark:text-primary-300 font-medium text-xs">
-                            {issue.assignee.name.charAt(0).toUpperCase()}
+                            {(issue.assignee.name || 'U').charAt(0).toUpperCase()}
                           </div>
                         )}
-                        <span>{issue.assignee.name}</span>
+                        <span>{issue.assignee.name || 'Unknown'}</span>
                       </div>
                     )}
                   </div>

@@ -16,6 +16,7 @@ export interface Project {
   name: string;
   description?: string;
   owner_id: string;
+  due_date?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -80,11 +81,13 @@ export interface CreateProjectDTO {
   name: string;
   description?: string;
   owner_id: string;
+  due_date?: string;
 }
 
 export interface UpdateProjectDTO {
   name?: string;
   description?: string;
+  due_date?: string;
 }
 
 export interface CreateIssueDTO {

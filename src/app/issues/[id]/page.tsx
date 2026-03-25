@@ -114,12 +114,12 @@ export default async function IssueDetailPage({
                     {issue.reporter.avatar_url ? (
                       <img
                         src={issue.reporter.avatar_url}
-                        alt={issue.reporter.name}
+                        alt={issue.reporter.name || 'Reporter'}
                         className="w-14 h-14 rounded-full border-2 border-blue-300 dark:border-blue-700"
                       />
                     ) : (
                       <div className="w-14 h-14 rounded-full bg-blue-200 dark:bg-blue-800 flex items-center justify-center text-blue-700 dark:text-blue-300 font-semibold text-lg">
-                        {issue.reporter.name.charAt(0).toUpperCase()}
+                        {(issue.reporter.name || 'R').charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
@@ -142,12 +142,12 @@ export default async function IssueDetailPage({
                       issue.assignee.avatar_url ? (
                         <img
                           src={issue.assignee.avatar_url}
-                          alt={issue.assignee.name}
+                          alt={issue.assignee.name || 'Assignee'}
                           className="w-14 h-14 rounded-full border-2 border-green-300 dark:border-green-700"
                         />
                       ) : (
                         <div className="w-14 h-14 rounded-full bg-green-200 dark:bg-green-800 flex items-center justify-center text-green-700 dark:text-green-300 font-semibold text-lg">
-                          {issue.assignee.name.charAt(0).toUpperCase()}
+                          {(issue.assignee.name || 'U').charAt(0).toUpperCase()}
                         </div>
                       )
                     ) : (

@@ -20,6 +20,7 @@ export default function EditProjectPage({
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    due_date: '',
   });
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function EditProjectPage({
         setFormData({
           name: data.data.name || '',
           description: data.data.description || '',
+          due_date: data.data.due_date ? new Date(data.data.due_date).toISOString().slice(0, 16) : '',
         });
         setIsFetching(false);
       } catch (err: any) {
@@ -124,6 +126,16 @@ export default function EditProjectPage({
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={4}
+              />
+
+              <Input
+                label="Project Deadline (Optional)"
+                type="datetime-local"
+                value={formData.due_date}
+                onChange={(e) =>
+                  setFormData({ ...formData, due_date: e.target.value })
+                }
+                helperText="Overall project completion target date"
               />
 
               <div className="flex gap-4">

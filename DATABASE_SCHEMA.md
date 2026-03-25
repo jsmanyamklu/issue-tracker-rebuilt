@@ -17,8 +17,12 @@ Stores user account information from OAuth providers.
 | avatar_url | TEXT | NULLABLE | URL to user's avatar image |
 | provider | VARCHAR(50) | NOT NULL | OAuth provider (google/github) |
 | provider_id | VARCHAR(255) | NOT NULL | Unique ID from OAuth provider |
+| role | user_role | NOT NULL, DEFAULT 'developer' | User role for access control |
 | created_at | TIMESTAMP | DEFAULT now() | Account creation timestamp |
 | updated_at | TIMESTAMP | DEFAULT now() | Last update timestamp |
+
+**Enums:**
+- `user_role`: admin, manager, developer, viewer
 
 **Indexes:**
 - `idx_users_email` on `email`
@@ -38,6 +42,7 @@ Stores project information.
 | name | VARCHAR(255) | NOT NULL | Project name |
 | description | TEXT | NULLABLE | Project description |
 | owner_id | UUID | NOT NULL, FK → users.id | Project creator/owner |
+| due_date | TIMESTAMP | NULLABLE | Project deadline/target completion date |
 | created_at | TIMESTAMP | DEFAULT now() | Project creation timestamp |
 | updated_at | TIMESTAMP | DEFAULT now() | Last update timestamp |
 
@@ -45,6 +50,7 @@ Stores project information.
 - `idx_projects_owner_id` on `owner_id`
 - `idx_projects_name` on `name`
 - `idx_projects_created_at` on `created_at DESC`
+- `idx_projects_due_date` on `due_date`
 
 **Foreign Keys:**
 - `owner_id` → `users.id` (CASCADE on delete)
@@ -65,6 +71,7 @@ Stores issues/tickets within projects.
 | type | issue_type | NOT NULL, DEFAULT 'task' | Issue type |
 | assignee_id | UUID | NULLABLE, FK → users.id | Assigned user |
 | reporter_id | UUID | NOT NULL, FK → users.id | User who reported |
+| due_date | TIMESTAMP | NULLABLE | Issue due date |
 | created_at | TIMESTAMP | DEFAULT now() | Issue creation timestamp |
 | updated_at | TIMESTAMP | DEFAULT now() | Last update timestamp |
 
@@ -136,6 +143,38 @@ Stores vector embeddings for AI similarity search.
 
 **Foreign Keys:**
 - `issue_id` → `issues.id` (CASCADE on delete)
+
+---
+
+### 6. activity_logs
+Stores comprehensive audit trail of all system activities.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | UUID | PRIMARY KEY | Activity log unique identifier |
+| user_id | UUID | NULLABLE, FK → users.id | User who performed the action |
+| action_type | VARCHAR(100) | NOT NULL | Type of action performed |
+| resource_type | VARCHAR(50) | NOT NULL | Type of resource affected |
+| resource_id | UUID | NOT NULL | ID of affected resource |
+| details | JSONB | DEFAULT '{}' | Additional context and metadata |
+| ip_address | VARCHAR(45) | NULLABLE | IP address of user |
+| user_agent | TEXT | NULLABLE | Browser/client user agent |
+| created_at | TIMESTAMP | DEFAULT now() | Activity timestamp |
+
+**Action Types:**
+- Issue: `issue_created`, `issue_updated`, `issue_status_changed`, `issue_assigned`, `issue_deleted`
+- Project: `project_created`, `project_updated`, `project_deleted`
+- Comment: `comment_created`, `comment_updated`, `comment_deleted`
+
+**Indexes:**
+- `idx_activity_logs_user_id` on `user_id`
+- `idx_activity_logs_action_type` on `action_type`
+- `idx_activity_logs_created_at` on `created_at DESC`
+- `idx_activity_logs_resource` on `resource_type, resource_id` (composite)
+- `idx_activity_logs_user_action` on `user_id, action_type` (composite)
+
+**Foreign Keys:**
+- `user_id` → `users.id` (SET NULL on delete)
 
 ---
 
