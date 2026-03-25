@@ -115,7 +115,7 @@ export default function EditIssuePage({
 
   if (isFetching) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card>
             <CardContent>
@@ -150,7 +150,7 @@ export default function EditIssuePage({
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
                   {error}
                 </div>
               )}

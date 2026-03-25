@@ -67,7 +67,7 @@ export default async function IssueDetailPage({
   } as const;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <div className="mb-4">
@@ -134,7 +134,7 @@ export default async function IssueDetailPage({
               <CardTitle>Description</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 whitespace-pre-wrap">{issue.description}</p>
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{issue.description}</p>
             </CardContent>
           </Card>
         )}
@@ -153,7 +153,7 @@ export default async function IssueDetailPage({
             {comments.length > 0 ? (
               <div className="space-y-4">
                 {comments.map((comment) => (
-                  <div key={comment.id} className="border-b border-gray-200 pb-4 last:border-0">
+                  <div key={comment.id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0">
                     <div className="flex items-start gap-3">
                       {comment.user.avatar_url && (
                         <img
@@ -169,7 +169,7 @@ export default async function IssueDetailPage({
                             {new Date(comment.created_at).toLocaleDateString()}
                           </span>
                         </div>
-                        <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{comment.content}</p>
                       </div>
                     </div>
                   </div>
@@ -177,7 +177,7 @@ export default async function IssueDetailPage({
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">No comments yet</p>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">No comments yet</p>
                 <Link href={`/issues/${issue.id}/comments/new`}>
                   <Button>Add First Comment</Button>
                 </Link>
