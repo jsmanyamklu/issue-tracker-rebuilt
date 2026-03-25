@@ -400,13 +400,15 @@ export class IssueService {
     openIssues: number;
     closedIssues: number;
   }> {
-    const [assignedToMe, reportedByMe] = await Promise.all([
+    const [assignedToMe, reportedByMe, allIssues] = await Promise.all([
       issueRepository.findByAssigneeId(userId),
       issueRepository.findByReporterId(userId),
+      issueRepository.findAll(),
     ]);
 
-    const openIssues = assignedToMe.filter((i) => i.status === 'open').length;
-    const closedIssues = assignedToMe.filter((i) => i.status === 'closed').length;
+    // Count ALL open and closed issues in the system
+    const openIssues = allIssues.filter((i) => i.status === 'open' || i.status === 'in_progress').length;
+    const closedIssues = allIssues.filter((i) => i.status === 'closed' || i.status === 'resolved').length;
 
     return {
       assignedToMe: assignedToMe.length,

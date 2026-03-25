@@ -50,6 +50,17 @@ export default function NewCommentPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        <div className="mb-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => router.push(`/issues/${issueId}`)}
+          >
+            ← Back to Issue
+          </Button>
+        </div>
+
         <Card>
           <CardHeader>
             <CardTitle>Add Comment</CardTitle>

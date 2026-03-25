@@ -4,12 +4,12 @@ services:
   # PostgreSQL Database for Development
   postgres:
     image: postgres:16-alpine
-    container_name: issue-tracker-db-dev
+    container_name: taskforge-db-dev
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: issue_tracker
+      POSTGRES_DB: taskforge
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     ports:
@@ -23,7 +23,7 @@ services:
   # Redis for Development (Optional)
   redis:
     image: redis:7-alpine
-    container_name: issue-tracker-redis-dev
+    container_name: taskforge-redis-dev
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -36,7 +36,7 @@ services:
   # pgAdmin for Database Management (Optional)
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: issue-tracker-pgadmin
+    container_name: taskforge-pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}

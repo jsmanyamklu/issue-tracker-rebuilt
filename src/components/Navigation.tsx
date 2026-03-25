@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { SignOutButton } from './auth/SignOutButton';
 import { UserAvatar } from './auth/UserAvatar';
+import { GlobalSearch } from './GlobalSearch';
+import { ThemeToggle } from './ui/ThemeToggle';
 
 export function Navigation() {
   const pathname = usePathname();
@@ -24,7 +26,7 @@ export function Navigation() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-primary-600">
-                Issue Tracker
+                TaskForge
               </span>
             </Link>
 
@@ -79,6 +81,12 @@ export function Navigation() {
 
           {/* User menu */}
           <div className="flex items-center gap-4">
+            {/* Global Search */}
+            {session && <GlobalSearch />}
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Keyboard shortcuts hint */}
             <button
               onClick={() => {

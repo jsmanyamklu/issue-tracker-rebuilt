@@ -9,8 +9,8 @@ import { KeyboardShortcuts } from '@/components/KeyboardShortcuts';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Issue Tracker',
-  description: 'Production-grade issue tracking system with clean architecture',
+  title: 'TaskForge',
+  description: 'TaskForge - Production-grade task and issue management platform with clean architecture',
 };
 
 export default async function RootLayout({

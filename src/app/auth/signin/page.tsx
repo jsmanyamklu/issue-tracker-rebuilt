@@ -24,7 +24,7 @@ export default async function SignInPage() {
               Welcome Back
             </h1>
             <p className="text-gray-600">
-              Sign in to your Issue Tracker account
+              Sign in to your TaskForge account
             </p>
           </div>
 

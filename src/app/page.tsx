@@ -23,7 +23,7 @@ export default async function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-primary-600">
-                Issue Tracker
+                TaskForge
               </h1>
             </div>
             <div>
@@ -46,7 +46,7 @@ export default async function HomePage() {
             <span className="text-primary-600"> Ship Faster</span>
           </h1>
           <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-            A production-grade issue tracking system with clean architecture,
+            A production-grade task and issue management platform with clean architecture,
             AI-powered insights, and zero vendor lock-in.
           </p>
           <div className="mt-10 flex justify-center gap-4">
@@ -188,7 +188,7 @@ export default async function HomePage() {
       {/* Footer */}
       <footer className="border-t mt-32 py-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
-          <p>© 2026 Issue Tracker. Built with clean architecture principles.</p>
+          <p>© 2026 TaskForge. Built with clean architecture principles.</p>
         </div>
       </footer>
     </div>

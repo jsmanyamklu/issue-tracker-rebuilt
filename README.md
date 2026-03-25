@@ -1,6 +1,6 @@
-# Issue Tracker - Clean Architecture
+# TaskForge - Clean Architecture
 
-> A production-grade issue tracking system built with clean architecture principles and zero vendor lock-in.
+> A production-grade task and issue management platform built with clean architecture principles and zero vendor lock-in.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
