@@ -13,6 +13,7 @@ import {
 import { NotFoundError, ValidationError, ForbiddenError } from '@/lib/errors';
 import { notifyIssueCreated, notifyIssueAssigned, notifyIssueStatusChanged } from '@/lib/notifications/slack';
 import { IssuePermissions } from '@/lib/permissions';
+import activityLogService from './ActivityLogService';
 
 /**
  * Issue Service
@@ -131,6 +132,17 @@ export class IssueService {
     // Create the issue
     const issue = await issueRepository.create(data);
 
+    // Log activity
+    await activityLogService.logIssueCreated(
+      data.reporter_id,
+      issue.id,
+      {
+        title: issue.title,
+        project_id: issue.project_id,
+        priority: issue.priority,
+      }
+    ).catch(err => console.error('Failed to log issue creation:', err));
+
     // Send Slack notification (async, non-blocking)
     const issueWithRelations = await issueRepository.findByIdWithRelations(issue.id);
     if (issueWithRelations) {
@@ -204,11 +216,57 @@ export class IssueService {
       }
     }
 
-    // Track old status for notification
+    // Track old values for logging
     const oldStatus = existingIssue.status;
+    const oldAssignee = existingIssue.assignee_id;
+    const oldPriority = existingIssue.priority;
+    const oldDueDate = existingIssue.due_date;
 
     // Update the issue
     const updatedIssue = await issueRepository.update(id, data);
+
+    // Log activity based on what changed
+    const changes: Record<string, any> = {};
+    if (data.title && data.title !== existingIssue.title) changes.title = { old: existingIssue.title, new: data.title };
+    if (data.description !== undefined) changes.description = 'updated';
+    if (data.status && data.status !== oldStatus) changes.status = { old: oldStatus, new: data.status };
+    if (data.priority && data.priority !== oldPriority) changes.priority = { old: oldPriority, new: data.priority };
+    if (data.assignee_id !== undefined && data.assignee_id !== oldAssignee) changes.assignee = { old: oldAssignee, new: data.assignee_id };
+    if (data.due_date !== undefined && data.due_date !== oldDueDate) changes.due_date = { old: oldDueDate, new: data.due_date };
+
+    // Log status change specifically
+    if (data.status && data.status !== oldStatus) {
+      await activityLogService.logIssueStatusChanged(
+        userId,
+        id,
+        oldStatus,
+        data.status
+      ).catch(err => console.error('Failed to log status change:', err));
+    }
+
+    // Log assignment if changed
+    if (data.assignee_id !== undefined && data.assignee_id !== oldAssignee) {
+      if (data.assignee_id) {
+        const assignee = await userRepository.findById(data.assignee_id);
+        if (assignee) {
+          await activityLogService.logIssueAssigned(
+            userId,
+            id,
+            data.assignee_id,
+            assignee.name
+          ).catch(err => console.error('Failed to log assignment:', err));
+        }
+      }
+    }
+
+    // Log general update if other fields changed
+    if (Object.keys(changes).length > 0) {
+      await activityLogService.logIssueUpdated(
+        userId,
+        id,
+        changes
+      ).catch(err => console.error('Failed to log issue update:', err));
+    }
 
     // Send Slack notification for status change (async, non-blocking)
     if (data.status && data.status !== oldStatus) {
@@ -254,6 +312,19 @@ export class IssueService {
     if (!IssuePermissions.canDelete(user.role, userId, issue, project.owner_id)) {
       throw new ForbiddenError('You do not have permission to delete this issue');
     }
+
+    // Log activity before deletion
+    await activityLogService.logActivity({
+      user_id: userId,
+      action_type: 'issue_deleted' as any,
+      resource_type: 'issue' as any,
+      resource_id: id,
+      details: {
+        title: issue.title,
+        project_id: issue.project_id,
+        status: issue.status,
+      },
+    }).catch(err => console.error('Failed to log issue deletion:', err));
 
     await issueRepository.delete(id);
   }

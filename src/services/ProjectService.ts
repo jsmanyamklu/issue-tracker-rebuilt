@@ -3,6 +3,7 @@ import { userRepository } from '@/repositories';
 import { Project, ProjectWithOwner, CreateProjectDTO, UpdateProjectDTO } from '@/types';
 import { NotFoundError, ValidationError, ForbiddenError } from '@/lib/errors';
 import { ProjectPermissions } from '@/lib/permissions';
+import activityLogService from './ActivityLogService';
 
 /**
  * Project Service
@@ -87,7 +88,16 @@ export class ProjectService {
     }
 
     // Create the project
-    return await projectRepository.create(data);
+    const project = await projectRepository.create(data);
+
+    // Log activity
+    await activityLogService.logProjectCreated(
+      data.owner_id,
+      project.id,
+      { name: project.name }
+    ).catch(err => console.error('Failed to log project creation:', err));
+
+    return project;
   }
 
   /**
@@ -122,7 +132,26 @@ export class ProjectService {
     }
 
     // Update the project
-    return await projectRepository.update(id, data);
+    const updatedProject = await projectRepository.update(id, data);
+
+    // Log activity
+    const changes: Record<string, any> = {};
+    if (data.name && data.name !== existingProject.name) {
+      changes.name = { old: existingProject.name, new: data.name };
+    }
+    if (data.description !== undefined) {
+      changes.description = 'updated';
+    }
+
+    await activityLogService.logActivity({
+      user_id: userId,
+      action_type: 'project_updated' as any,
+      resource_type: 'project' as any,
+      resource_id: id,
+      details: { changes },
+    }).catch(err => console.error('Failed to log project update:', err));
+
+    return updatedProject;
   }
 
   /**
@@ -145,6 +174,18 @@ export class ProjectService {
     if (!ProjectPermissions.canDelete(user.role, userId, project)) {
       throw new ForbiddenError('You do not have permission to delete this project');
     }
+
+    // Log activity before deletion
+    await activityLogService.logActivity({
+      user_id: userId,
+      action_type: 'project_deleted' as any,
+      resource_type: 'project' as any,
+      resource_id: id,
+      details: {
+        name: project.name,
+        owner_id: project.owner_id,
+      },
+    }).catch(err => console.error('Failed to log project deletion:', err));
 
     await projectRepository.delete(id);
   }

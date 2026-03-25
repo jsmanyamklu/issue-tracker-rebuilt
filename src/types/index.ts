@@ -169,6 +169,191 @@ export interface SimilarIssue {
   matching_aspects: string[];
 }
 
+// ==================== Activity Log Types ====================
+
+export interface ActivityLog {
+  id: string;
+  user_id?: string;
+  action_type: ActivityActionType;
+  resource_type: ResourceType;
+  resource_id: string;
+  details: Record<string, any>;
+  ip_address?: string;
+  user_agent?: string;
+  created_at: Date;
+}
+
+export interface ActivityLogWithUser extends ActivityLog {
+  user?: Pick<User, 'id' | 'name' | 'email' | 'avatar_url'>;
+}
+
+export enum ActivityActionType {
+  // Issue actions
+  ISSUE_CREATED = 'issue_created',
+  ISSUE_UPDATED = 'issue_updated',
+  ISSUE_DELETED = 'issue_deleted',
+  ISSUE_STATUS_CHANGED = 'issue_status_changed',
+  ISSUE_ASSIGNED = 'issue_assigned',
+  ISSUE_UNASSIGNED = 'issue_unassigned',
+  ISSUE_PRIORITY_CHANGED = 'issue_priority_changed',
+  ISSUE_DUE_DATE_SET = 'issue_due_date_set',
+  ISSUE_DUE_DATE_CHANGED = 'issue_due_date_changed',
+
+  // Project actions
+  PROJECT_CREATED = 'project_created',
+  PROJECT_UPDATED = 'project_updated',
+  PROJECT_DELETED = 'project_deleted',
+
+  // Comment actions
+  COMMENT_CREATED = 'comment_created',
+  COMMENT_UPDATED = 'comment_updated',
+  COMMENT_DELETED = 'comment_deleted',
+
+  // User actions
+  USER_LOGGED_IN = 'user_logged_in',
+  USER_LOGGED_OUT = 'user_logged_out',
+  USER_ROLE_CHANGED = 'user_role_changed',
+
+  // System actions
+  SYSTEM_MIGRATION = 'system_migration',
+  SYSTEM_ERROR = 'system_error',
+}
+
+export enum ResourceType {
+  ISSUE = 'issue',
+  PROJECT = 'project',
+  COMMENT = 'comment',
+  USER = 'user',
+  DATABASE = 'database',
+  SYSTEM = 'system',
+}
+
+export interface CreateActivityLogDTO {
+  user_id?: string;
+  action_type: ActivityActionType;
+  resource_type: ResourceType;
+  resource_id: string;
+  details?: Record<string, any>;
+  ip_address?: string;
+  user_agent?: string;
+}
+
+export interface ActivityLogFilters {
+  user_id?: string;
+  action_type?: ActivityActionType;
+  resource_type?: ResourceType;
+  resource_id?: string;
+  start_date?: Date;
+  end_date?: Date;
+  limit?: number;
+  offset?: number;
+}
+
+// ==================== AI Analytics Types ====================
+
+export interface ActivityInsights {
+  summary: InsightSummary;
+  patterns: ActivityPattern[];
+  predictions: Prediction[];
+  recommendations: Recommendation[];
+  generated_at: Date;
+}
+
+export interface InsightSummary {
+  total_actions: number;
+  active_users: number;
+  most_common_action: string;
+  busiest_hour: number;
+  busiest_day: string;
+  trend: 'increasing' | 'decreasing' | 'stable';
+}
+
+export interface ActivityPattern {
+  pattern_type: string;
+  description: string;
+  frequency: number;
+  impact: 'high' | 'medium' | 'low';
+  affected_resources: string[];
+}
+
+export interface Prediction {
+  prediction_type: string;
+  description: string;
+  confidence: number;
+  timeframe: string;
+  affected_items: string[];
+}
+
+export interface Recommendation {
+  category: string;
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  action_items: string[];
+}
+
+export interface AnalyticsMetrics {
+  issue_metrics: IssueMetrics;
+  user_metrics: UserMetrics;
+  project_metrics: ProjectMetrics;
+  performance_metrics: PerformanceMetrics;
+}
+
+export interface IssueMetrics {
+  total_issues: number;
+  open_issues: number;
+  in_progress_issues: number;
+  resolved_issues: number;
+  closed_issues: number;
+  overdue_issues: number;
+  average_resolution_time_hours: number;
+  issues_by_priority: Record<IssuePriority, number>;
+  issues_by_type: Record<IssueType, number>;
+  issue_velocity: number; // issues resolved per day
+}
+
+export interface UserMetrics {
+  total_users: number;
+  active_users_last_7_days: number;
+  active_users_last_30_days: number;
+  most_active_users: Array<{
+    user_id: string;
+    user_name: string;
+    action_count: number;
+  }>;
+  top_resolvers: Array<{
+    user_id: string;
+    user_name: string;
+    resolved_count: number;
+    average_resolution_hours: number;
+  }>;
+}
+
+export interface ProjectMetrics {
+  total_projects: number;
+  active_projects: number;
+  projects_with_overdue_issues: number;
+  project_health_scores: Array<{
+    project_id: string;
+    project_name: string;
+    health_score: number; // 0-100
+    open_issues: number;
+    overdue_issues: number;
+  }>;
+}
+
+export interface PerformanceMetrics {
+  average_time_to_assign_hours: number;
+  average_time_to_first_response_hours: number;
+  average_time_in_progress_hours: number;
+  reassignment_rate: number; // percentage of issues that get reassigned
+  bottlenecks: Array<{
+    stage: string;
+    average_time_hours: number;
+    issue_count: number;
+  }>;
+}
+
 // ==================== Response Types ====================
 
 export interface ApiResponse<T = any> {

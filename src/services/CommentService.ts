@@ -5,6 +5,7 @@ import { Comment, CommentWithUser, CreateCommentDTO } from '@/types';
 import { NotFoundError, ValidationError, ForbiddenError } from '@/lib/errors';
 import { notifyIssueCommented } from '@/lib/notifications/slack';
 import { CommentPermissions } from '@/lib/permissions';
+import activityLogService from './ActivityLogService';
 
 /**
  * Comment Service
@@ -96,6 +97,13 @@ export class CommentService {
     // Create the comment
     const comment = await commentRepository.create(data);
 
+    // Log activity
+    await activityLogService.logCommentCreated(
+      data.user_id,
+      comment.id,
+      data.issue_id
+    ).catch(err => console.error('Failed to log comment creation:', err));
+
     // Send Slack notification (async, non-blocking)
     const issueWithRelations = await issueRepository.findByIdWithRelations(data.issue_id);
     if (issueWithRelations) {
@@ -142,7 +150,21 @@ export class CommentService {
     }
 
     // Update the comment
-    return await commentRepository.update(id, content);
+    const updatedComment = await commentRepository.update(id, content);
+
+    // Log activity
+    await activityLogService.logActivity({
+      user_id: userId,
+      action_type: 'comment_updated' as any,
+      resource_type: 'comment' as any,
+      resource_id: id,
+      details: {
+        issue_id: existingComment.issue_id,
+        content_changed: true,
+      },
+    }).catch(err => console.error('Failed to log comment update:', err));
+
+    return updatedComment;
   }
 
   /**
@@ -165,6 +187,17 @@ export class CommentService {
     if (!CommentPermissions.canDelete(user.role, userId, comment)) {
       throw new ForbiddenError('You do not have permission to delete this comment');
     }
+
+    // Log activity before deletion
+    await activityLogService.logActivity({
+      user_id: userId,
+      action_type: 'comment_deleted' as any,
+      resource_type: 'comment' as any,
+      resource_id: id,
+      details: {
+        issue_id: comment.issue_id,
+      },
+    }).catch(err => console.error('Failed to log comment deletion:', err));
 
     await commentRepository.delete(id);
   }
