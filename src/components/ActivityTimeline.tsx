@@ -137,10 +137,24 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                         {getActivityMessage(activity)}
                       </span>
                     </div>
-                    <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-300">
-                      {formatDistanceToNow(new Date(activity.timestamp), {
-                        addSuffix: true,
-                      })}
+                    <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                      <time
+                        dateTime={activity.timestamp}
+                        title={new Date(activity.timestamp).toLocaleString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                          hour12: true
+                        })}
+                        className="cursor-help"
+                      >
+                        {formatDistanceToNow(new Date(activity.timestamp), {
+                          addSuffix: true,
+                        })}
+                      </time>
                     </p>
                   </div>
                 </div>
