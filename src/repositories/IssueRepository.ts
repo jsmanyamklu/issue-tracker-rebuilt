@@ -262,8 +262,8 @@ export class IssueRepository {
   async create(data: CreateIssueDTO): Promise<Issue> {
     try {
       const result = await query<Issue>(
-        `INSERT INTO issues (project_id, title, description, status, priority, type, assignee_id, reporter_id)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `INSERT INTO issues (project_id, title, description, status, priority, type, assignee_id, reporter_id, due_date)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING *`,
         [
           data.project_id,
@@ -274,6 +274,7 @@ export class IssueRepository {
           data.type || 'task',
           data.assignee_id,
           data.reporter_id,
+          data.due_date || null,
         ]
       );
       return result.rows[0];
@@ -295,8 +296,9 @@ export class IssueRepository {
              priority = COALESCE($4, priority),
              type = COALESCE($5, type),
              assignee_id = COALESCE($6, assignee_id),
+             due_date = CASE WHEN $7::text = '' THEN NULL ELSE COALESCE($7::date, due_date) END,
              updated_at = CURRENT_TIMESTAMP
-         WHERE id = $7
+         WHERE id = $8
          RETURNING *`,
         [
           data.title,
@@ -305,6 +307,7 @@ export class IssueRepository {
           data.priority,
           data.type,
           data.assignee_id,
+          data.due_date,
           id,
         ]
       );
@@ -426,6 +429,44 @@ export class IssueRepository {
       return stats;
     } catch (error) {
       throw new DatabaseError('Failed to get priority statistics', error as Error);
+    }
+  }
+
+  /**
+   * Find overdue issues (past due date and not closed/resolved)
+   */
+  async findOverdueIssues(): Promise<IssueWithRelations[]> {
+    try {
+      const result = await query<IssueWithRelations>(
+        `SELECT i.*,
+                json_build_object(
+                  'id', p.id,
+                  'name', p.name
+                ) as project,
+                json_build_object(
+                  'id', a.id,
+                  'name', a.name,
+                  'email', a.email,
+                  'avatar_url', a.avatar_url
+                ) as assignee,
+                json_build_object(
+                  'id', r.id,
+                  'name', r.name,
+                  'email', r.email,
+                  'avatar_url', r.avatar_url
+                ) as reporter
+         FROM issues i
+         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN users a ON i.assignee_id = a.id
+         JOIN users r ON i.reporter_id = r.id
+         WHERE i.due_date IS NOT NULL
+           AND i.due_date < CURRENT_DATE
+           AND i.status NOT IN ('closed', 'resolved')
+         ORDER BY i.due_date ASC`
+      );
+      return result.rows;
+    } catch (error) {
+      throw new DatabaseError('Failed to fetch overdue issues', error as Error);
     }
   }
 }

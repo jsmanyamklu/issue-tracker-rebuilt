@@ -15,14 +15,30 @@ interface User {
   created_at: string;
 }
 
+interface OverdueIssue {
+  id: string;
+  title: string;
+  project: string;
+  assignee: string;
+  assigneeEmail?: string;
+  daysOverdue: number;
+  priority: string;
+  status: string;
+}
+
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+  const [overdueIssues, setOverdueIssues] = useState<OverdueIssue[]>([]);
+  const [loadingOverdue, setLoadingOverdue] = useState(false);
+  const [sendingNotifications, setSendingNotifications] = useState(false);
+  const [notificationResult, setNotificationResult] = useState<string>('');
 
   useEffect(() => {
     loadUsers();
+    loadOverdueIssues();
   }, []);
 
   const loadUsers = async () => {
@@ -87,6 +103,46 @@ export default function AdminPage() {
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
+  const loadOverdueIssues = async () => {
+    setLoadingOverdue(true);
+    try {
+      const res = await fetch('/api/notifications/overdue');
+      const data = await res.json();
+
+      if (data.success) {
+        setOverdueIssues(data.data);
+      }
+    } catch (err) {
+      console.error('Failed to load overdue issues:', err);
+    } finally {
+      setLoadingOverdue(false);
+    }
+  };
+
+  const sendOverdueNotifications = async () => {
+    setSendingNotifications(true);
+    setNotificationResult('');
+
+    try {
+      const res = await fetch('/api/notifications/overdue', {
+        method: 'POST',
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setNotificationResult(`✅ ${data.message}`);
+        // Reload overdue issues after sending notifications
+        await loadOverdueIssues();
+      } else {
+        setNotificationResult(`❌ ${data.error}`);
+      }
+    } catch (err: any) {
+      setNotificationResult(`❌ Failed to send notifications: ${err.message}`);
+    } finally {
+      setSendingNotifications(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
@@ -117,6 +173,85 @@ export default function AdminPage() {
             {error}
           </div>
         )}
+
+        {/* Overdue Issues Notification */}
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>📧 Overdue Issue Notifications</CardTitle>
+              <Button
+                onClick={sendOverdueNotifications}
+                isLoading={sendingNotifications}
+                disabled={overdueIssues.length === 0}
+                size="sm"
+              >
+                Send Notifications to Assignees
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loadingOverdue ? (
+              <p className="text-gray-500 dark:text-gray-400">Loading overdue issues...</p>
+            ) : overdueIssues.length > 0 ? (
+              <>
+                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-red-800 dark:text-red-300 font-semibold">
+                    ⚠️ {overdueIssues.length} issue{overdueIssues.length > 1 ? 's' : ''} overdue
+                  </p>
+                  <p className="text-red-700 dark:text-red-400 text-sm mt-1">
+                    Click the button above to send email notifications to assignees
+                  </p>
+                </div>
+
+                {notificationResult && (
+                  <div className={`mb-4 p-4 border rounded-lg ${
+                    notificationResult.startsWith('✅')
+                      ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300'
+                      : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300'
+                  }`}>
+                    {notificationResult}
+                  </div>
+                )}
+
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {overdueIssues.map((issue) => (
+                    <div
+                      key={issue.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                    >
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
+                        <div className="flex items-center gap-3 mt-1 text-sm text-gray-600 dark:text-gray-400">
+                          <span>📁 {issue.project}</span>
+                          <span>👤 {issue.assignee}</span>
+                          <Badge variant="danger" className="text-xs">
+                            {issue.daysOverdue} day{issue.daysOverdue > 1 ? 's' : ''} overdue
+                          </Badge>
+                          <Badge variant={issue.priority === 'critical' || issue.priority === 'high' ? 'danger' : 'warning'} className="text-xs">
+                            {issue.priority}
+                          </Badge>
+                        </div>
+                      </div>
+                      <a
+                        href={`/issues/${issue.id}`}
+                        className="ml-4 text-primary-600 dark:text-primary-400 hover:underline text-sm"
+                      >
+                        View →
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-green-600 dark:text-green-400 font-semibold">✅ No overdue issues!</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                  All issues with due dates are on track
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Role Information */}
         <Card className="mb-6">
