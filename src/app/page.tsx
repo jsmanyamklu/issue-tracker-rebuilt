@@ -177,7 +177,7 @@ export default async function HomePage() {
           <p className="text-gray-600 mb-8">
             Next.js 15, React 19, TypeScript, PostgreSQL, NextAuth
           </p>
-          <div className="flex justify-center gap-8 text-gray-400">
+          <div className="flex justify-center gap-8 text-gray-400 dark:text-gray-300">
             <span className="text-4xl font-bold">Next.js</span>
             <span className="text-4xl font-bold">React</span>
             <span className="text-4xl font-bold">PostgreSQL</span>

@@ -94,7 +94,7 @@ export default function AdminPage() {
           <Card>
             <CardContent>
               <div className="text-center py-12">
-                <p className="text-gray-500 dark:text-gray-400">Loading users...</p>
+                <p className="text-gray-500 dark:text-gray-300">Loading users...</p>
               </div>
             </CardContent>
           </Card>
@@ -205,7 +205,7 @@ export default function AdminPage() {
                       <option value={UserRole.VIEWER}>Viewer</option>
                     </select>
                     {updatingUserId === user.id && (
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Updating...</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-300">Updating...</span>
                     )}
                   </div>
                 </div>

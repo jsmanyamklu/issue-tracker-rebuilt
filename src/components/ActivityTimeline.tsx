@@ -99,7 +99,7 @@ function getActivityMessage(activity: Activity): string {
 export function ActivityTimeline({ activities }: ActivityTimelineProps) {
   if (activities.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-300">
         <p>No activity yet</p>
       </div>
     );
@@ -130,14 +130,14 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                 <div className="min-w-0 flex-1">
                   <div>
                     <div className="text-sm">
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-gray-900 dark:text-gray-300">
                         {activity.user.name}
                       </span>{' '}
-                      <span className="text-gray-500">
+                      <span className="text-gray-500 dark:text-gray-300">
                         {getActivityMessage(activity)}
                       </span>
                     </div>
-                    <p className="mt-0.5 text-sm text-gray-500">
+                    <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-300">
                       {formatDistanceToNow(new Date(activity.timestamp), {
                         addSuffix: true,
                       })}

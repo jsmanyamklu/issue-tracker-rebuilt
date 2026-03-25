@@ -85,7 +85,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 </svg>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 We apologize for the inconvenience. The error has been logged and we'll look into
                 it.
               </p>

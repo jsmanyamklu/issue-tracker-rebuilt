@@ -120,7 +120,7 @@ export default function EditIssuePage({
           <Card>
             <CardContent>
               <div className="text-center py-12">
-                <p className="text-gray-500 dark:text-gray-400">Loading issue...</p>
+                <p className="text-gray-500 dark:text-gray-300">Loading issue...</p>
               </div>
             </CardContent>
           </Card>

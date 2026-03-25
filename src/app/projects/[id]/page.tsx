@@ -76,7 +76,7 @@ export default async function ProjectDetailPage({
             </div>
           </div>
           {project.description && (
-            <p className="text-gray-700 dark:text-gray-200">{project.description}</p>
+            <p className="text-gray-700 dark:text-gray-300">{project.description}</p>
           )}
         </div>
 
@@ -126,13 +126,13 @@ export default async function ProjectDetailPage({
                   <Link
                     key={issue.id}
                     href={`/issues/${issue.id}`}
-                    className="block p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 dark:border-gray-700"
+                    className="block p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
                         {issue.description && (
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
                             {issue.description}
                           </p>
                         )}

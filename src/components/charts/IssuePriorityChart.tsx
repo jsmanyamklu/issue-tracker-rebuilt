@@ -30,7 +30,7 @@ export function IssuePriorityChart({ data }: IssuePriorityChartProps) {
 
   if (!hasData) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-400">
+      <div className="flex items-center justify-center h-64 text-gray-400 dark:text-gray-300">
         <p>No priority data available</p>
       </div>
     );

@@ -115,17 +115,17 @@ export default async function ProjectsPage() {
                               </Badge>
                             )}
                             {total === 0 && (
-                              <span className="text-xs text-gray-400">No issues yet</span>
+                              <span className="text-xs text-gray-400 dark:text-gray-300">No issues yet</span>
                             )}
                           </div>
                         </div>
                       );
                     })()}
 
-                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-300">
                       <span>Owner: {project.owner?.name || 'Unknown'}</span>
                     </div>
-                    <div className="mt-2 text-xs text-gray-400">
+                    <div className="mt-2 text-xs text-gray-400 dark:text-gray-300">
                       Created {new Date(project.created_at).toLocaleDateString()}
                     </div>
                   </CardContent>

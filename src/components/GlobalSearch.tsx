@@ -113,7 +113,7 @@ export function GlobalSearch() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -139,11 +139,11 @@ export function GlobalSearch() {
       {/* Search Modal */}
       <div
         ref={searchRef}
-        className="fixed top-20 left-1/2 transform -translate-x-1/2 w-full max-w-2xl bg-white rounded-lg shadow-2xl z-50 overflow-hidden"
+        className="fixed top-20 left-1/2 transform -translate-x-1/2 w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 overflow-hidden"
       >
         {/* Search Input */}
-        <div className="flex items-center px-4 border-b border-gray-200">
-          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center px-4 border-b border-gray-200 dark:border-gray-700">
+          <svg className="w-5 h-5 text-gray-400 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -160,7 +160,7 @@ export function GlobalSearch() {
               setSelectedIndex(0);
             }}
             placeholder="Search projects and issues..."
-            className="flex-1 px-4 py-4 text-lg outline-none"
+            className="flex-1 px-4 py-4 text-lg outline-none bg-transparent dark:text-white placeholder:dark:text-gray-400"
             autoFocus
           />
           {loading && (
@@ -176,18 +176,18 @@ export function GlobalSearch() {
                 <li key={result.id}>
                   <button
                     onClick={() => navigateToResult(result)}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors ${
+                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
                       index === selectedIndex ? 'bg-primary-50' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-1">
                         {result.type === 'project' ? (
-                          <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-5 h-5 text-gray-400 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
                           </svg>
                         ) : (
-                          <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-5 h-5 text-gray-400 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
                             <path
                               fillRule="evenodd"
@@ -224,11 +224,11 @@ export function GlobalSearch() {
               ))}
             </ul>
           ) : query.length >= 2 && !loading ? (
-            <div className="px-4 py-8 text-center text-gray-500">
+            <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-300">
               <p>No results found for "{query}"</p>
             </div>
           ) : query.length < 2 ? (
-            <div className="px-4 py-8 text-center text-gray-500">
+            <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-300">
               <p className="mb-2">Type to search projects and issues</p>
               <div className="text-xs space-y-1">
                 <p>Press ↑ ↓ to navigate</p>

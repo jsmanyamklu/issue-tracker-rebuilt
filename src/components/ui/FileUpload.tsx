@@ -162,13 +162,13 @@ export function FileUpload({
           </svg>
 
           {uploading ? (
-            <p className="text-sm text-gray-600">Uploading...</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Uploading...</p>
           ) : (
             <>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 <span className="font-semibold text-primary-600">Click to upload</span> or drag and drop
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-300">
                 PNG, JPG, PDF, TXT up to 10MB ({files.length}/{maxFiles} files)
               </p>
             </>
@@ -179,7 +179,7 @@ export function FileUpload({
       {/* Uploaded Files List */}
       {files.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-700">Uploaded Files</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Uploaded Files</p>
           {files.map((file) => (
             <div
               key={file.id}
@@ -191,7 +191,7 @@ export function FileUpload({
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {file.originalName}
                   </p>
-                  <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-300">{formatFileSize(file.size)}</p>
                 </div>
               </div>
 

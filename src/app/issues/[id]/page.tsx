@@ -165,7 +165,7 @@ export default async function IssueDetailPage({
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-medium text-gray-900 dark:text-white">{comment.user.name}</span>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                          <span className="text-sm text-gray-500 dark:text-gray-300">
                             {new Date(comment.created_at).toLocaleDateString()}
                           </span>
                         </div>

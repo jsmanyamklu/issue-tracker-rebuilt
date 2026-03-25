@@ -133,7 +133,7 @@ export default async function MyIssuesPage() {
         ) : (
           <Card>
             <CardContent className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">No issues assigned to you</p>
+              <p className="text-gray-500 dark:text-gray-300">No issues assigned to you</p>
             </CardContent>
           </Card>
         )}
@@ -151,7 +151,7 @@ function IssueCard({ issue }: { issue: any }) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">{issue.project?.name || 'Unknown Project'}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-300">{issue.project?.name || 'Unknown Project'}</span>
           </div>
           <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
           {issue.description && (

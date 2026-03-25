@@ -248,7 +248,7 @@ export default function IssuesPage() {
         {isLoading ? (
           <Card>
             <CardContent className="py-12">
-              <div className="text-center text-gray-500 dark:text-gray-400">Loading issues...</div>
+              <div className="text-center text-gray-500 dark:text-gray-300">Loading issues...</div>
             </CardContent>
           </Card>
         ) : (
@@ -279,7 +279,7 @@ export default function IssuesPage() {
                                 {issue.description}
                               </p>
                             )}
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-300">
                               <div>
                                 <span className="font-medium">Project:</span>{' '}
                                 {issue.project.name}

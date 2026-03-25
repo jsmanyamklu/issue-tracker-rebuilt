@@ -35,7 +35,7 @@ export default async function SignInPage() {
           </div>
 
           {/* Footer */}
-          <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-300">
             By signing in, you agree to our Terms of Service and Privacy Policy
           </div>
         </div>

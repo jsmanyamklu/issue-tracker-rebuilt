@@ -101,7 +101,7 @@ export function KanbanBoard({ issues, onStatusChange }: KanbanBoardProps) {
             <h3 className="font-semibold text-gray-900 dark:text-white">
               {column.label}
             </h3>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-gray-600 dark:text-gray-300">
               {groupedIssues[column.id]?.length || 0}
             </span>
           </div>
@@ -134,7 +134,7 @@ export function KanbanBoard({ issues, onStatusChange }: KanbanBoardProps) {
 
                     {/* Assignee */}
                     {issue.assignee && (
-                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
                         {issue.assignee.avatar_url ? (
                           <img
                             src={issue.assignee.avatar_url}

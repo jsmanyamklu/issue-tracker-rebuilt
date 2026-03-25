@@ -92,7 +92,7 @@ export function KeyboardShortcutsHelp({ isOpen, onClose }: KeyboardShortcutsHelp
           {/* Header */}
           <div className="border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-300">
                 Keyboard Shortcuts
               </h2>
               <button
@@ -132,7 +132,7 @@ export function KeyboardShortcutsHelp({ isOpen, onClose }: KeyboardShortcutsHelp
                         key={index}
                         className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50 transition-colors"
                       >
-                        <span className="text-sm text-gray-700">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
                           {shortcut.description}
                         </span>
                         <div className="flex items-center gap-1">

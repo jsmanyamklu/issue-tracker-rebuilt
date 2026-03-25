@@ -36,7 +36,7 @@ export function IssueStatusChart({ data }: IssueStatusChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-400">
+      <div className="flex items-center justify-center h-64 text-gray-400 dark:text-gray-300">
         <p>No issue data available</p>
       </div>
     );
