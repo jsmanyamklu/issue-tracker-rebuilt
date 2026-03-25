@@ -53,7 +53,7 @@ export default async function ProjectDetailPage({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -166,7 +166,7 @@ export default async function ProjectDetailPage({
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-500 mb-4">No issues in this project yet</p>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">No issues in this project yet</p>
                 <Link href={`/issues/new?project_id=${project.id}`}>
                   <Button>Create First Issue</Button>
                 </Link>

@@ -121,7 +121,7 @@ export default async function DashboardPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">No issues assigned to you</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">No issues assigned to you</p>
               )}
               <div className="mt-4">
                 <Link
@@ -166,7 +166,7 @@ export default async function DashboardPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">No projects yet</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">No projects yet</p>
               )}
               <div className="mt-4">
                 <Link

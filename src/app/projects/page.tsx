@@ -40,7 +40,7 @@ export default async function ProjectsPage() {
   const projects = await getProjectsWithStats();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -66,7 +66,7 @@ export default async function ProjectsPage() {
                   </CardHeader>
                   <CardContent>
                     {project.description && (
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                         {project.description}
                       </p>
                     )}
@@ -79,11 +79,11 @@ export default async function ProjectsPage() {
                       const progress = total > 0 ? (completed / total) * 100 : 0;
 
                       return (
-                        <div className="mb-4 pb-4 border-b border-gray-200 space-y-3">
+                        <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700 space-y-3">
                           {/* Progress Bar */}
                           {total > 0 && (
                             <div>
-                              <div className="flex justify-between text-xs text-gray-500 mb-1">
+                              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
                                 <span className="font-medium">Progress</span>
                                 <span>{completed}/{total} completed</span>
                               </div>
@@ -92,7 +92,7 @@ export default async function ProjectsPage() {
                           )}
 
                           {/* Issue Status Badges */}
-                          <div className="text-xs font-semibold text-gray-500 mb-2">Issues</div>
+                          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Issues</div>
                           <div className="flex flex-wrap gap-2">
                             {project.issueStats.open > 0 && (
                               <Badge variant="warning" className="text-xs">

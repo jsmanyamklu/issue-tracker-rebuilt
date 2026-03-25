@@ -35,7 +35,7 @@ export default async function MyIssuesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -133,7 +133,7 @@ export default async function MyIssuesPage() {
         ) : (
           <Card>
             <CardContent className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-300">No issues assigned to you</p>
+              <p className="text-gray-500 dark:text-gray-400">No issues assigned to you</p>
             </CardContent>
           </Card>
         )}
@@ -146,7 +146,7 @@ function IssueCard({ issue }: { issue: any }) {
   return (
     <Link
       href={`/issues/${issue.id}`}
-      className="block p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 dark:border-gray-700"
+      className="block p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -155,7 +155,7 @@ function IssueCard({ issue }: { issue: any }) {
           </div>
           <h4 className="font-medium text-gray-900 dark:text-white">{issue.title}</h4>
           {issue.description && (
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
               {issue.description}
             </p>
           )}
