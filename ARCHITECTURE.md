@@ -509,19 +509,19 @@ class IssueRepository {
 
 ---
 
-## Comparison with Original (InsForge)
+## Architecture Approach: BaaS vs Clean Architecture
 
-| Aspect | Original (InsForge) | Rebuilt (Clean Architecture) |
-|--------|-------------------|----------------------------|
-| Backend | InsForge BaaS | Custom Next.js + PostgreSQL |
+| Aspect | Traditional BaaS Approach | TaskForge (Clean Architecture) |
+|--------|--------------------------|-------------------------------|
+| Backend | Third-party BaaS | Custom Next.js + PostgreSQL |
 | Architecture | Monolithic BaaS | Layered clean architecture |
-| Database Access | InsForge SDK | Raw SQL with pg driver |
+| Database Access | BaaS SDK | Raw SQL with pg driver |
 | Business Logic | Mixed in components | Dedicated Service layer |
 | Testing | Difficult | Easy (isolated layers) |
 | Vendor Lock-in | High | None |
 | Control | Limited | Full |
 | Learning Curve | Low | Medium |
-| Scalability | Limited by BaaS | Fully scalable |
+| Scalability | Limited by provider | Fully scalable |
 
 ---
 

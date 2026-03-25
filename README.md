@@ -10,7 +10,7 @@
 
 ## Overview
 
-This is a **complete rebuild** of an InsForge-based issue tracker into an explicit, maintainable, and scalable application following **clean architecture principles**. No ORM magic, no vendor lock-in, just clean, production-ready code.
+TaskForge is a **modern, enterprise-grade task and issue management platform** built from the ground up with **clean architecture principles**. No ORM magic, no vendor lock-in, just clean, production-ready code with complete control over your stack.
 
 ### Key Features
 
@@ -333,16 +333,17 @@ Use managed PostgreSQL:
 ✅ **No Lock-in** - Can swap any technology
 ✅ **Team-Friendly** - Clear structure for collaboration
 
-### Comparison
+### Key Advantages
 
-| Original (InsForge) | Rebuilt (Clean) |
-|-------------------|-----------------|
-| BaaS vendor lock-in | No lock-in |
-| Hidden logic | Explicit code |
-| Limited control | Full control |
-| Mixed concerns | Clean layers |
-| Hard to test | Easy to test |
-| Limited scaling | Fully scalable |
+| Approach | TaskForge (Clean Architecture) |
+|----------|-------------------------------|
+| Architecture | Layered clean architecture |
+| Vendor Lock-in | None - use any database/framework |
+| Code Style | Explicit, readable, maintainable |
+| Control | Full control over entire stack |
+| Separation | Clean separation of concerns |
+| Testing | Easy - isolated testable layers |
+| Scaling | Fully scalable horizontally |
 
 ## Contributing
 

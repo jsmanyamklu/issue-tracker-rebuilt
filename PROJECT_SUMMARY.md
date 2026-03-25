@@ -2,7 +2,7 @@
 
 ## Overview
 
-A **production-grade issue tracking system** built with **clean architecture principles** and **zero vendor lock-in**. This is a complete rebuild of an InsForge-based system into an explicit, maintainable, and scalable application.
+TaskForge is a **production-grade task and issue tracking system** built with **clean architecture principles** and **zero vendor lock-in**. Built from the ground up as an explicit, maintainable, and scalable application with modern best practices.
 
 ## Key Features
 
@@ -302,18 +302,18 @@ See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed instructions.
 
 See [SETUP_GUIDE.md](SETUP_GUIDE.md) for deployment details.
 
-## Comparison: Original vs Rebuilt
+## Architecture Approach Comparison
 
-| Aspect | Original (InsForge) | Rebuilt (Clean) |
-|--------|-------------------|-----------------|
-| **Backend** | InsForge BaaS | Custom Next.js + PostgreSQL |
+| Aspect | Traditional BaaS | TaskForge (Clean Architecture) |
+|--------|------------------|-------------------------------|
+| **Backend** | Third-party BaaS | Custom Next.js + PostgreSQL |
 | **Architecture** | Monolithic BaaS | Layered clean architecture |
-| **Database Access** | InsForge SDK | Raw SQL with pg |
+| **Database Access** | BaaS SDK | Raw SQL with pg driver |
 | **Business Logic** | Mixed in UI | Dedicated Service layer |
 | **Vendor Lock-in** | High | None |
 | **Control** | Limited | Full |
 | **Testability** | Difficult | Easy |
-| **Scalability** | Limited | Fully scalable |
+| **Scalability** | Limited by provider | Fully scalable |
 | **Maintainability** | Medium | High |
 | **Learning Curve** | Low | Medium |
 | **Production Ready** | Yes | Yes |
