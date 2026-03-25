@@ -154,3 +154,43 @@ export async function notifyIssueCommented(
     comment,
   });
 }
+
+/**
+ * Notify about overdue issues
+ */
+export async function notifyOverdueIssues(issues: Array<{
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  type: string;
+  project: { name: string };
+  assignee?: { name: string; email: string };
+  due_date: string;
+}>): Promise<void> {
+  if (!slackService.isEnabled()) {
+    log.debug('Slack not configured, skipping overdue notification');
+    return;
+  }
+
+  try {
+    const channel = process.env.SLACK_DEFAULT_CHANNEL || '#issue-tracker';
+    const message = slackService.buildOverdueNotification(issues);
+
+    // Use webhook if available (simpler), otherwise use bot token
+    if (process.env.SLACK_WEBHOOK_URL) {
+      await slackService.sendWebhookMessage(message);
+    } else if (process.env.SLACK_BOT_TOKEN) {
+      await slackService.sendMessage(channel, message);
+    }
+
+    log.info('Slack overdue notification sent', {
+      count: issues.length,
+    });
+  } catch (error) {
+    log.error('Failed to send Slack overdue notification', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    // Don't throw - notification failures shouldn't break the main flow
+  }
+}

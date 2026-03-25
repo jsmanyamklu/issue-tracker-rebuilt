@@ -401,6 +401,149 @@ export class SlackService {
 
     return { blocks };
   }
+
+  /**
+   * Build overdue issues notification
+   */
+  buildOverdueNotification(
+    issues: Array<{
+      id: string;
+      title: string;
+      status: string;
+      priority: string;
+      type: string;
+      project: { name: string };
+      assignee?: { name: string; email: string };
+      due_date: string;
+    }>
+  ): SlackMessage {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const blocks: SlackBlock[] = [
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: `🚨 ${issues.length} Overdue Issue${issues.length > 1 ? 's' : ''}`,
+          emoji: true,
+        },
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*Attention Required:* The following issue${issues.length > 1 ? 's have' : ' has'} passed ${issues.length > 1 ? 'their' : 'its'} due date and need${issues.length === 1 ? 's' : ''} immediate attention.`,
+        },
+      },
+      {
+        type: 'divider',
+      },
+    ];
+
+    // Group by priority
+    const critical = issues.filter((i) => i.priority === 'critical');
+    const high = issues.filter((i) => i.priority === 'high');
+    const medium = issues.filter((i) => i.priority === 'medium');
+    const low = issues.filter((i) => i.priority === 'low');
+
+    const addIssueBlock = (issue: typeof issues[0]) => {
+      const issueUrl = `${baseUrl}/issues/${issue.id}`;
+      const dueDate = new Date(issue.due_date);
+      const daysOverdue = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*<${issueUrl}|${issue.title}>*\n${this.formatPriority(issue.priority)} • ${this.formatStatus(issue.status)} • ${issue.project.name}\n⚠️ *${daysOverdue} day${daysOverdue > 1 ? 's' : ''} overdue* ${issue.assignee ? `• Assigned to *${issue.assignee.name}*` : '• *Unassigned*'}`,
+        },
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'View Issue',
+            emoji: true,
+          },
+          url: issueUrl,
+          action_id: `view_issue_${issue.id}`,
+        },
+      });
+    };
+
+    // Add issues by priority
+    if (critical.length > 0) {
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*🔴 Critical Priority Issues:*',
+        },
+      });
+      critical.forEach(addIssueBlock);
+      blocks.push({ type: 'divider' });
+    }
+
+    if (high.length > 0) {
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*🟠 High Priority Issues:*',
+        },
+      });
+      high.forEach(addIssueBlock);
+      blocks.push({ type: 'divider' });
+    }
+
+    if (medium.length > 0) {
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*🟡 Medium Priority Issues:*',
+        },
+      });
+      medium.forEach(addIssueBlock);
+      blocks.push({ type: 'divider' });
+    }
+
+    if (low.length > 0) {
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*🟢 Low Priority Issues:*',
+        },
+      });
+      low.forEach(addIssueBlock);
+    }
+
+    // Add action button to view all overdue issues
+    blocks.push(
+      { type: 'divider' },
+      {
+        type: 'context',
+        elements: [
+          {
+            type: 'mrkdwn',
+            text: '💡 _Please review these issues and update their status or due dates accordingly._',
+          },
+        ],
+      }
+    );
+
+    return {
+      blocks,
+      attachments: [
+        {
+          color: '#dc2626', // Red color for urgency
+          blocks: [],
+        },
+      ],
+    };
+  }
 }
 
 // Export singleton instance

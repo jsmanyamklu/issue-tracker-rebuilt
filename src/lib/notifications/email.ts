@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { IssueWithRelations } from '@/types';
+import { notifyOverdueIssues as notifyOverdueIssuesSlack } from './slack';
 
 // Email transporter configuration
 const transporter = nodemailer.createTransport({
@@ -168,10 +169,12 @@ export async function notifyOverdueIssue(issue: IssueWithRelations): Promise<voi
 /**
  * Send batch overdue notifications for multiple issues
  */
-export async function notifyOverdueIssues(issues: IssueWithRelations[]): Promise<{ sent: number; failed: number }> {
+export async function notifyOverdueIssues(issues: IssueWithRelations[]): Promise<{ sent: number; failed: number; slackSent: boolean }> {
   let sent = 0;
   let failed = 0;
+  let slackSent = false;
 
+  // Send individual email notifications to assignees
   for (const issue of issues) {
     try {
       await notifyOverdueIssue(issue);
@@ -181,5 +184,17 @@ export async function notifyOverdueIssues(issues: IssueWithRelations[]): Promise
     }
   }
 
-  return { sent, failed };
+  // Send consolidated Slack notification
+  if (issues.length > 0) {
+    try {
+      await notifyOverdueIssuesSlack(issues);
+      slackSent = true;
+      console.log('✅ Slack notification sent for overdue issues');
+    } catch (error) {
+      console.error('❌ Failed to send Slack notification for overdue issues:', error);
+      // Don't fail the entire operation if Slack fails
+    }
+  }
+
+  return { sent, failed, slackSent };
 }

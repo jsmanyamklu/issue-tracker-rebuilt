@@ -43,13 +43,25 @@ export async function POST(request: NextRequest) {
     // Send notifications
     const result = await notifyOverdueIssues(overdueIssues);
 
+    const notificationChannels = [];
+    if (result.sent > 0) {
+      notificationChannels.push(`📧 Email: ${result.sent} sent`);
+    }
+    if (result.failed > 0) {
+      notificationChannels.push(`❌ Email: ${result.failed} failed`);
+    }
+    if (result.slackSent) {
+      notificationChannels.push(`💬 Slack: Sent`);
+    }
+
     return NextResponse.json({
       success: true,
-      message: `Notifications sent for ${result.sent} overdue issue(s)`,
+      message: `Notifications sent: ${notificationChannels.join(', ')}`,
       data: {
         total: overdueIssues.length,
-        sent: result.sent,
-        failed: result.failed,
+        emailSent: result.sent,
+        emailFailed: result.failed,
+        slackSent: result.slackSent,
         issues: overdueIssues.map((issue) => ({
           id: issue.id,
           title: issue.title,
