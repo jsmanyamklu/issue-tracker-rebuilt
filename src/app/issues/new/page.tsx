@@ -25,6 +25,7 @@ export default function NewIssuePage() {
     type: 'bug',
     status: 'open',
     assignee_id: '',
+    due_date: '',
   });
 
   // Fetch projects and users on mount
@@ -185,6 +186,15 @@ export default function NewIssuePage() {
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
+                }
+              />
+
+              <Input
+                type="date"
+                label="Expected Closure Date (Optional)"
+                value={formData.due_date}
+                onChange={(e) =>
+                  setFormData({ ...formData, due_date: e.target.value })
                 }
               />
 

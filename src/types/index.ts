@@ -30,6 +30,7 @@ export interface Issue {
   type: IssueType;
   assignee_id?: string;
   reporter_id: string;
+  due_date?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -95,6 +96,7 @@ export interface CreateIssueDTO {
   type?: IssueType;
   assignee_id?: string;
   reporter_id: string;
+  due_date?: string;
 }
 
 export interface UpdateIssueDTO {
@@ -104,6 +106,7 @@ export interface UpdateIssueDTO {
   priority?: IssuePriority;
   type?: IssueType;
   assignee_id?: string;
+  due_date?: string;
 }
 
 export interface CreateCommentDTO {

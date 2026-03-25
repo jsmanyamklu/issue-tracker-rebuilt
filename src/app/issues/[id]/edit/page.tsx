@@ -28,6 +28,7 @@ export default function EditIssuePage({
     type: 'bug',
     status: 'open',
     assignee_id: '',
+    due_date: '',
   });
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function EditIssuePage({
           type: issue.type || 'bug',
           status: issue.status || 'open',
           assignee_id: issue.assignee_id || '',
+          due_date: issue.due_date || '',
         });
 
         setIsFetching(false);
@@ -241,6 +243,15 @@ export default function EditIssuePage({
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
+                }
+              />
+
+              <Input
+                type="date"
+                label="Expected Closure Date (Optional)"
+                value={formData.due_date}
+                onChange={(e) =>
+                  setFormData({ ...formData, due_date: e.target.value })
                 }
               />
 
