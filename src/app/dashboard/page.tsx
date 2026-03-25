@@ -124,7 +124,7 @@ export default async function DashboardPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-gray-900 dark:text-white truncate">{issue.title}</h4>
-                          <div className="flex items-center gap-2 mt-1">
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
                             <Badge variant={issue.priority === 'critical' || issue.priority === 'high' ? 'danger' : 'default'}>
                               {issue.priority}
                             </Badge>
@@ -132,6 +132,21 @@ export default async function DashboardPage() {
                             <Badge variant={issue.status === 'open' ? 'warning' : issue.status === 'in_progress' ? 'info' : 'success'}>
                               {issue.status.replace('_', ' ')}
                             </Badge>
+                            {(() => {
+                              const dueDate = issue.due_date ? new Date(issue.due_date) : null;
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              const isOverdue = dueDate && dueDate < today && issue.status !== 'closed' && issue.status !== 'resolved';
+                              if (isOverdue) {
+                                const daysOverdue = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+                                return (
+                                  <Badge variant="danger" className="animate-pulse text-xs">
+                                    🚨 {daysOverdue}d overdue
+                                  </Badge>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         </div>
                       </div>

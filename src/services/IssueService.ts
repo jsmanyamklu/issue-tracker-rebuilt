@@ -417,6 +417,13 @@ export class IssueService {
       closedIssues,
     };
   }
+
+  /**
+   * Get count of overdue issues for a project
+   */
+  async getOverdueCount(projectId?: string): Promise<number> {
+    return await issueRepository.getOverdueCount(projectId);
+  }
 }
 
 // Export singleton instance

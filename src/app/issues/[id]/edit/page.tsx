@@ -94,6 +94,19 @@ export default function EditIssuePage({
       return;
     }
 
+    // Validate due date is not in the past
+    if (formData.due_date) {
+      const selectedDate = new Date(formData.due_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        setError('Expected closure date cannot be in the past');
+        setIsLoading(false);
+        return;
+      }
+    }
+
     try {
       const res = await fetch(`/api/issues/${issueId}`, {
         method: 'PUT',
@@ -253,6 +266,7 @@ export default function EditIssuePage({
                 onChange={(e) =>
                   setFormData({ ...formData, due_date: e.target.value })
                 }
+                min={new Date().toISOString().split('T')[0]}
               />
 
               <div className="flex gap-4">

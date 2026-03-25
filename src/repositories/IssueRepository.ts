@@ -469,6 +469,29 @@ export class IssueRepository {
       throw new DatabaseError('Failed to fetch overdue issues', error as Error);
     }
   }
+
+  /**
+   * Get count of overdue issues for a project
+   */
+  async getOverdueCount(projectId?: string): Promise<number> {
+    try {
+      const whereClause = projectId
+        ? 'WHERE i.project_id = $1 AND i.due_date IS NOT NULL AND i.due_date < CURRENT_DATE AND i.status NOT IN (\'closed\', \'resolved\')'
+        : 'WHERE i.due_date IS NOT NULL AND i.due_date < CURRENT_DATE AND i.status NOT IN (\'closed\', \'resolved\')';
+      const params = projectId ? [projectId] : [];
+
+      const result = await query<{ count: string }>(
+        `SELECT COUNT(*) as count
+         FROM issues i
+         ${whereClause}`,
+        params
+      );
+
+      return parseInt(result.rows[0]?.count || '0', 10);
+    } catch (error) {
+      throw new DatabaseError('Failed to get overdue count', error as Error);
+    }
+  }
 }
 
 // Export singleton instance

@@ -15,10 +15,14 @@ async function getProjectsWithStats() {
     // Fetch issue stats for each project
     const projectsWithStats = await Promise.all(
       projects.map(async (project: any) => {
-        const stats = await issueService.getStatsByStatus(project.id);
+        const [stats, overdueCount] = await Promise.all([
+          issueService.getStatsByStatus(project.id),
+          issueService.getOverdueCount(project.id),
+        ]);
         return {
           ...project,
           issueStats: stats,
+          overdueCount,
         };
       })
     );
@@ -112,6 +116,11 @@ export default async function ProjectsPage() {
                             {project.issueStats.closed > 0 && (
                               <Badge variant="default" className="text-xs">
                                 ⚪ {project.issueStats.closed}
+                              </Badge>
+                            )}
+                            {project.overdueCount > 0 && (
+                              <Badge variant="danger" className="text-xs font-semibold animate-pulse">
+                                🚨 {project.overdueCount} Overdue
                               </Badge>
                             )}
                             {total === 0 && (

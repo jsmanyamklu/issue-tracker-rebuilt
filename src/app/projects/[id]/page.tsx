@@ -44,12 +44,23 @@ export default async function ProjectDetailPage({
 
   const isOwner = project.owner_id === user.id;
 
+  // Calculate overdue issues
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const overdueIssues = issues.filter((i: any) =>
+    i.due_date &&
+    new Date(i.due_date) < today &&
+    i.status !== 'closed' &&
+    i.status !== 'resolved'
+  );
+
   const stats = {
     total: issues.length,
     open: issues.filter((i: any) => i.status === 'open').length,
     inProgress: issues.filter((i: any) => i.status === 'in_progress').length,
     resolved: issues.filter((i: any) => i.status === 'resolved').length,
     closed: issues.filter((i: any) => i.status === 'closed').length,
+    overdue: overdueIssues.length,
   };
 
   return (
@@ -81,7 +92,7 @@ export default async function ProjectDetailPage({
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card>
             <CardContent className="text-center py-4">
               <div className="text-2xl font-bold">{stats.total}</div>
@@ -112,6 +123,16 @@ export default async function ProjectDetailPage({
               <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
             </CardContent>
           </Card>
+          {stats.overdue > 0 && (
+            <Card className="border-2 border-red-500 dark:border-red-600">
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-500 animate-pulse">
+                  🚨 {stats.overdue}
+                </div>
+                <div className="text-sm text-red-700 dark:text-red-400 font-semibold">Overdue</div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Issues List */}
@@ -184,7 +205,7 @@ export default async function ProjectDetailPage({
                             {issue.description}
                           </p>
                         )}
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <Badge
                             variant={
                               issue.priority === 'critical' || issue.priority === 'high'
@@ -206,6 +227,21 @@ export default async function ProjectDetailPage({
                           >
                             {issue.status.replace('_', ' ')}
                           </Badge>
+                          {(() => {
+                            const dueDate = issue.due_date ? new Date(issue.due_date) : null;
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const isOverdue = dueDate && dueDate < today && issue.status !== 'closed' && issue.status !== 'resolved';
+                            if (isOverdue) {
+                              const daysOverdue = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+                              return (
+                                <Badge variant="danger" className="animate-pulse font-semibold">
+                                  🚨 {daysOverdue}d overdue
+                                </Badge>
+                              );
+                            }
+                            return null;
+                          })()}
                         </div>
                       </div>
                     </div>
