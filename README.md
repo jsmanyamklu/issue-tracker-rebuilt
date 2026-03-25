@@ -1,382 +1,425 @@
-# TaskForge - Clean Architecture
+# TaskForge - Production-Grade Issue Tracker
 
-> A production-grade task and issue management platform built with clean architecture principles and zero vendor lock-in.
+**A modern, full-stack issue tracking system built with Next.js 15, TypeScript, and PostgreSQL**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## Overview
+---
 
-TaskForge is a **modern, enterprise-grade task and issue management platform** built from the ground up with **clean architecture principles**. No ORM magic, no vendor lock-in, just clean, production-ready code with complete control over your stack.
+## 📋 Table of Contents
 
-### Key Features
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [Core Features](#-core-features)
+- [Documentation](#-documentation)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
 
-✅ **User Authentication** - Google & GitHub OAuth
-✅ **Project Management** - Create and organize projects
-✅ **Issue Tracking** - Full CRUD with status, priority, type
-✅ **Comments** - Collaborate on issues
-✅ **Dashboard** - Personalized overview
-✅ **AI-Powered** - Auto-classification, root cause analysis, similarity search (optional)
-✅ **Production-Ready** - Type-safe, secure, performant, testable
+---
 
-## Architecture
+## 🎯 Overview
 
-```
-┌─────────────────────────────────────────────┐
-│         Frontend (Next.js 15)               │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│         API Layer (Route Handlers)          │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│         Controller Layer                    │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│    Service Layer (Business Logic)           │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│    Repository Layer (Raw SQL)               │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│         PostgreSQL Database                 │
-└─────────────────────────────────────────────┘
+TaskForge is a **production-grade issue tracking system** designed for modern development teams. It combines enterprise-level features with a clean, intuitive interface - offering a powerful alternative to tools like Jira, Linear, and Asana.
 
-         AI Module (Optional, Separate)
-```
+### Why TaskForge?
 
-**Key Principles:**
-- ✅ Separation of Concerns
-- ✅ Dependency Inversion
-- ✅ Explicit over Implicit
-- ✅ No Vendor Lock-in
-- ✅ Testable & Maintainable
+- **🚀 Production-Ready**: Clean architecture, comprehensive RBAC, and enterprise features
+- **⚡ Fast & Responsive**: Built with Next.js 15 Server Components for optimal performance
+- **🎨 Beautiful UI**: Modern design with full dark mode support and excellent UX
+- **🔒 Secure**: OAuth authentication, role-based access control, and security best practices
+- **📊 Data-Driven**: Rich dashboards, filtering, and overdue tracking
+- **🔔 Notifications**: Email and Slack integration for real-time updates
+- **💻 Open Source**: No vendor lock-in, fully customizable
 
-## Quick Start
+---
 
+## ✨ Key Features
+
+### Core Functionality
+- ✅ **Project Management** - Create and manage multiple projects
+- ✅ **Issue Tracking** - Full CRUD operations with rich metadata
+- ✅ **User Management** - Complete authentication and profile management
+- ✅ **Comments System** - Threaded discussions with full timestamps
+- ✅ **Activity Timeline** - Full audit trail of all changes
+
+### Advanced Features
+- 🎯 **Role-Based Access Control** (RBAC)
+  - Admin, Manager, and User roles
+  - Granular permissions system
+  - Project ownership controls
+
+- 📊 **Smart Dashboards**
+  - Personalized issue views
+  - Real-time statistics (Assigned, Reported, Open, Closed, Overdue)
+  - Clickable stat cards for instant filtering
+  - Recent issues and projects
+
+- 🔍 **Advanced Filtering**
+  - Multi-parameter filtering (status, priority, project, assignee)
+  - Scope-based filtering (All/My Issues/Assigned/Reported)
+  - Overdue issues filter with visual indicator
+  - Client-side search in title/description
+
+- ⏰ **Due Date Management**
+  - Issue due dates with past date validation
+  - Overdue tracking and alerts
+  - Visual indicators with pulsing badges
+  - Days overdue calculation and display
+
+- 🔔 **Notification System**
+  - Email notifications via Nodemailer
+  - Slack integration (Webhooks & Bot API)
+  - Bulk overdue notifications
+  - Beautiful HTML email templates
+  - Customizable channels
+
+- 🌓 **Dark Mode**
+  - System-wide dark theme
+  - Smooth transitions
+  - Persistent preferences
+  - Optimized color palette
+
+- 📱 **Responsive Design**
+  - Mobile-first approach
+  - Tablet and desktop optimized
+  - Touch-friendly interfaces
+
+### User Experience
+- ⌨️ **Keyboard Shortcuts** - Power user workflows
+- 🔎 **Global Search** - Find anything instantly
+- 🕒 **Smart Timestamps** - Relative time with full tooltips
+- 👤 **User Avatars** - Visual identity throughout
+- 📍 **Breadcrumb Navigation** - Clear page hierarchy
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: Next.js 15.5 (React 19)
+- **Language**: TypeScript 5.0
+- **Styling**: Tailwind CSS 3.4
+- **UI Components**: Custom component library
+- **Date Handling**: date-fns
+- **Icons**: Heroicons (via SVG)
+
+### Backend
+- **Runtime**: Node.js 20+
+- **Framework**: Next.js API Routes & Server Actions
+- **Database**: PostgreSQL 14+
+- **ORM**: Raw SQL with pg (node-postgres)
+- **Authentication**: NextAuth.js v4
+- **Email**: Nodemailer
+- **Notifications**: Slack API & Webhooks
+
+### Development
+- **Package Manager**: npm
+- **Linting**: ESLint with Next.js config
+- **Type Checking**: TypeScript strict mode
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** 20.x or higher
+- **PostgreSQL** 14.x or higher
+- **npm** or **yarn**
+
+### Installation
+
+1. **Clone the repository**
 ```bash
-# 1. Install dependencies
+git clone <repository-url>
+cd issue-tracker-rebuilt
+```
+
+2. **Install dependencies**
+```bash
 npm install
+```
 
-# 2. Configure environment
+3. **Set up environment variables**
+```bash
 cp .env.example .env
-# Edit .env with your credentials
+```
 
-# 3. Run database migrations
+Edit `.env`:
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/taskforge
+
+# NextAuth
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key
+
+# OAuth Providers
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Email (Optional)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+
+# Slack (Optional)
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+SLACK_DEFAULT_CHANNEL=#issue-tracker
+```
+
+4. **Set up the database**
+```bash
+createdb taskforge
 npm run migrate
+```
 
-# 4. (Optional) Seed sample data
-npm run db:seed
-
-# 5. Start development server
+5. **Start development**
+```bash
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000)
 
-👉 **Detailed setup:** [SETUP_GUIDE.md](SETUP_GUIDE.md)
+---
 
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS |
-| Backend | Next.js API Routes, PostgreSQL, pg driver |
-| Auth | NextAuth (Google, GitHub OAuth) |
-| AI (Optional) | OpenAI API |
-| Testing | Jest, React Testing Library |
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 issue-tracker-rebuilt/
 ├── src/
-│   ├── app/                 # Next.js pages & API routes
-│   ├── controllers/         # HTTP request/response handling
-│   ├── services/            # Business logic
-│   ├── repositories/        # Database operations (raw SQL)
-│   ├── lib/                 # Utilities (db, auth, ai)
-│   ├── components/          # React components
-│   └── types/               # TypeScript definitions
-├── migrations/              # SQL migration files
-├── scripts/                 # Utility scripts
-├── .env.example             # Environment template
-└── [documentation files]
+│   ├── app/                    # Next.js 15 App Router
+│   │   ├── api/               # API Routes
+│   │   ├── auth/              # Authentication pages
+│   │   ├── dashboard/         # Dashboard
+│   │   ├── issues/            # Issue management
+│   │   ├── projects/          # Project management
+│   │   ├── admin/             # Admin panel
+│   │   └── layout.tsx         # Root layout
+│   │
+│   ├── components/            # React components
+│   │   ├── ui/               # UI components
+│   │   ├── Navigation.tsx    # Main navigation
+│   │   └── ...
+│   │
+│   ├── lib/                   # Utilities
+│   │   ├── auth.ts           # Authentication
+│   │   ├── db.ts             # Database connection
+│   │   ├── notifications/    # Email & Slack
+│   │   └── ...
+│   │
+│   ├── repositories/          # Data access layer
+│   ├── services/              # Business logic
+│   ├── controllers/           # API controllers
+│   └── types/                 # TypeScript types
+│
+├── migrations/                # SQL migrations
+├── scripts/                   # Utility scripts
+└── docs/                      # Documentation
 ```
-
-## Documentation
-
-📚 **Complete documentation available:**
-
-- [SETUP_GUIDE.md](SETUP_GUIDE.md) - Detailed setup instructions
-- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture deep-dive
-- [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - REST API reference
-- [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) - Database schema
-- [AUTHENTICATION_GUIDE.md](AUTHENTICATION_GUIDE.md) - Auth setup
-- [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) - Complete project overview
-
-## API Overview
-
-### Projects
-```
-GET    /api/projects           # List all projects
-POST   /api/projects           # Create project
-GET    /api/projects/:id       # Get project
-PUT    /api/projects/:id       # Update project
-DELETE /api/projects/:id       # Delete project
-```
-
-### Issues
-```
-GET    /api/issues             # List issues (with filters)
-POST   /api/issues             # Create issue
-GET    /api/issues/:id         # Get issue
-PUT    /api/issues/:id         # Update issue
-DELETE /api/issues/:id         # Delete issue
-GET    /api/issues/search      # Search issues
-```
-
-### AI Features
-```
-POST   /api/ai/classify        # Auto-classify issue
-POST   /api/ai/root-cause      # Analyze root cause
-POST   /api/ai/similar         # Find similar issues
-```
-
-👉 **Full API docs:** [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
-
-## Features
-
-### Core Functionality
-
-#### Project Management
-- Create and organize multiple projects
-- View project details and statistics
-- Track issues per project
-
-#### Issue Tracking
-- Create, edit, and delete issues
-- Set status, priority, and type
-- Assign issues to team members
-- Search and filter issues
-- Full-text search support
-
-#### Comments
-- Add comments to issues
-- Edit and delete own comments
-- Collaborative discussions
-
-#### Dashboard
-- Personalized issue overview
-- Statistics and metrics
-- Recent activity
-
-### AI Features (Optional)
-
-#### Auto-Classification
-Automatically determines issue type (bug, feature, task, improvement) and priority (low, medium, high, critical) using LLM analysis.
-
-```typescript
-POST /api/ai/classify
-{
-  "title": "Login page crashes on mobile",
-  "description": "Users cannot log in from mobile devices"
-}
-
-Response:
-{
-  "type": "bug",
-  "priority": "high",
-  "confidence": 0.92,
-  "reasoning": "Critical user-facing functionality is broken"
-}
-```
-
-#### Root Cause Analysis
-AI-powered debugging assistance that suggests likely causes and fixes.
-
-```typescript
-POST /api/ai/root-cause
-{
-  "title": "Database connection timeout",
-  "description": "API returning 500 errors intermittently",
-  "logs": "Error: connection timeout after 5000ms"
-}
-
-Response:
-{
-  "likely_cause": "Connection pool exhausted",
-  "suggested_fixes": [
-    "Increase connection pool size",
-    "Implement connection retry logic",
-    "Add query timeout limits"
-  ],
-  "confidence": 0.85
-}
-```
-
-#### Similar Issue Detection
-Find duplicate or related issues using vector embeddings.
-
-```typescript
-POST /api/ai/similar
-{
-  "title": "User login fails with 500 error",
-  "description": "Cannot authenticate users"
-}
-
-Response:
-{
-  "similar_issues": [
-    {
-      "issue": { ... },
-      "similarity_score": 0.89,
-      "matching_aspects": ["Same symptoms", "Related component"]
-    }
-  ]
-}
-```
-
-## Database Schema
-
-### Tables
-- **users** - User accounts (OAuth)
-- **projects** - Project information
-- **issues** - Issues/tickets
-- **comments** - Comments on issues
-- **issue_embeddings** - Vector embeddings for AI
-
-### Features
-- UUID primary keys
-- Foreign key constraints
-- Automatic timestamps
-- Full-text search indexes
-- Type-safe enums
-
-👉 **Full schema:** [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)
-
-## Development
-
-### Commands
-
-```bash
-npm run dev          # Start dev server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # TypeScript checking
-
-npm run migrate      # Run database migrations
-npm run db:reset     # Reset database (careful!)
-npm run db:seed      # Seed sample data
-```
-
-### Testing
-
-```bash
-npm run test         # Run tests
-npm run test:watch   # Watch mode
-npm run test:coverage # Coverage report
-```
-
-## Deployment
-
-### Environment Variables
-
-Required for production:
-
-```bash
-DATABASE_URL=postgresql://...
-NEXTAUTH_URL=https://yourdomain.com
-NEXTAUTH_SECRET=your-secret
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-GITHUB_CLIENT_ID=...
-GITHUB_CLIENT_SECRET=...
-OPENAI_API_KEY=...  # Optional
-```
-
-### Platforms
-
-Deploy to:
-- **Vercel** (recommended) - One-click deploy
-- **Netlify** - Serverless functions
-- **AWS** - EC2, ECS, or Lambda
-- **Google Cloud Run** - Containerized
-- Any Node.js hosting platform
-
-### Database
-
-Use managed PostgreSQL:
-- AWS RDS
-- Google Cloud SQL
-- Azure Database
-- Supabase (database only)
-- Railway, Neon
-
-👉 **Deployment guide:** [SETUP_GUIDE.md](SETUP_GUIDE.md#production-deployment)
-
-## Why Clean Architecture?
-
-### Benefits
-
-✅ **Maintainable** - Clear separation of concerns
-✅ **Testable** - Each layer tested independently
-✅ **Scalable** - Easy to add features and scale
-✅ **No Lock-in** - Can swap any technology
-✅ **Team-Friendly** - Clear structure for collaboration
-
-### Key Advantages
-
-| Approach | TaskForge (Clean Architecture) |
-|----------|-------------------------------|
-| Architecture | Layered clean architecture |
-| Vendor Lock-in | None - use any database/framework |
-| Code Style | Explicit, readable, maintainable |
-| Control | Full control over entire stack |
-| Separation | Clean separation of concerns |
-| Testing | Easy - isolated testable layers |
-| Scaling | Fully scalable horizontally |
-
-## Contributing
-
-Contributions welcome! This project demonstrates:
-
-1. **Clean Architecture** principles
-2. **Explicit over Implicit** coding
-3. **Production-ready** patterns
-4. **No vendor lock-in** approach
-
-Please open issues or pull requests.
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file
-
-## Learn More
-
-### Resources
-- [Clean Architecture (Robert C. Martin)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-
-### Support
-
-- 📖 Read the documentation in this repo
-- 🐛 Report bugs via GitHub Issues
-- 💡 Request features via GitHub Issues
-- 📧 Questions? Open a discussion
 
 ---
 
-**Built with ❤️ using clean architecture principles**
+## 🎯 Core Features
 
-[⭐ Star this repo](https://github.com/yourusername/issue-tracker-rebuilt) if you find it helpful!
+### 1. Dashboard
+
+**Statistics**:
+- Assigned to Me (clickable)
+- Reported by Me (clickable)
+- Open Issues (clickable)
+- Closed Issues (clickable)
+- **Overdue Issues** (red, animated, clickable)
+
+**Features**:
+- Role-aware filtering (admin sees all, users see their own)
+- Recent issues preview
+- Quick project access
+- Smart navigation via stat cards
+
+### 2. Issue Management
+
+**Create/Edit**:
+- Title, description, type, priority, status
+- Assign to team members
+- Set due dates (prevents past dates)
+- Link to projects
+- Full validation
+
+**Issue Details Page**:
+- **Top Section**: 4-panel info card
+  - Creator (who reported)
+  - Assignee (who's working on it)
+  - Current stage (status with icon)
+  - Expected closure (due date with days remaining/overdue)
+- Description
+- Comment threads with full timestamps
+- Activity timeline
+
+**Issue List**:
+- **Left**: Reporter & Assignee avatars, title, description, badges
+- **Right Top**: Project name + Creation date/time
+- **Right Bottom**: "Assigned to: [Name]"
+- Overdue badges with animation
+
+### 3. Filtering System
+
+**Filters Available**:
+- Status (All, Open, In Progress, Resolved, Closed)
+- Priority (All, Low, Medium, High, Critical)
+- Project (dropdown of all projects)
+- Assignee (team members + Unassigned option)
+- **Scope** (Admin/Manager only):
+  - All Issues
+  - Assigned to Me
+  - Reported by Me
+  - My Issues (Both)
+- **Overdue** (checkbox/toggle)
+- Search (text in title/description)
+
+**Behavior**:
+- Real-time filtering
+- URL-based (shareable links)
+- Clear filters button
+- Visual indicator for overdue filter
+
+### 4. Comments
+
+- Add/edit comments
+- Full timestamps (e.g., "Jan 15, 2026, 03:45 PM")
+- Relative time ("2 minutes ago")
+- Hover for exact timestamp
+- User attribution with avatars
+
+### 5. RBAC System
+
+**Admin**:
+- Full system access
+- User management
+- Role assignments
+- All projects and issues
+
+**Manager**:
+- View all issues
+- Manage team projects
+- Assign issues
+- View reports
+
+**User**:
+- Create/edit own issues
+- Comment on issues
+- View assigned/reported issues
+
+### 6. Notifications
+
+**Email**:
+- Overdue issue alerts
+- Beautiful HTML templates
+- Individual or bulk sending
+- Admin-triggered from admin panel
+
+**Slack**:
+- Real-time notifications
+- Overdue summaries grouped by priority
+- Webhook or Bot Token support
+- Rich formatting with colors and emojis
+
+### 7. Dark Mode
+
+- System-wide toggle
+- Persistent preferences
+- Smooth transitions
+- Optimized colors:
+  - Backgrounds: gray-900, gray-800
+  - Text: gray-300, white
+  - Borders: gray-700
+
+---
+
+## 📚 Documentation
+
+- **[FEATURES.md](FEATURES.md)** - Complete feature list
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design
+- **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** - API reference
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Setup instructions
+- **[USER_GUIDE.md](USER_GUIDE.md)** - End-user docs
+- **[RBAC-SYSTEM.md](RBAC-SYSTEM.md)** - Access control
+- **[EMAIL_SETUP.md](EMAIL_SETUP.md)** - Email config
+- **[SLACK_SETUP.md](SLACK_SETUP.md)** - Slack integration
+- **[DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)** - Database structure
+- **[TESTING_REPORT.md](TESTING_REPORT.md)** - Test results
+
+---
+
+## 🧪 Testing
+
+See [TESTING_REPORT.md](TESTING_REPORT.md) for complete test results.
+
+**Test Coverage**:
+- ✅ Authentication flows
+- ✅ RBAC permissions
+- ✅ Project CRUD
+- ✅ Issue management
+- ✅ Filtering system
+- ✅ Dashboard statistics
+- ✅ Dark mode
+- ✅ Overdue tracking
+- ✅ Comments system
+- ✅ Notifications
+
+---
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push to GitHub
+2. Import in Vercel
+3. Set environment variables
+4. Deploy!
+
+### Manual
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome!
+
+1. Fork the repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE)
+
+---
+
+## 📧 Contact
+
+- **Issues**: [GitHub Issues](https://github.com/your-org/taskforge/issues)
+- **Email**: support@taskforge.dev
+
+---
+
+**Built with ❤️ by the TaskForge Team**
+
+⭐ Star us on GitHub!

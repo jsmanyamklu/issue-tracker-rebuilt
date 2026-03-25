@@ -45,38 +45,46 @@ export default async function MyIssuesPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-yellow-600">
-                {groupedIssues.open.length}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-blue-600">
-                {groupedIssues.inProgress.length}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-green-600">
-                {groupedIssues.resolved.length}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">
-                {groupedIssues.closed.length}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
-            </CardContent>
-          </Card>
+          <Link href="/issues?scope=assigned&status=open">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {groupedIssues.open.length}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/issues?scope=assigned&status=in_progress">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-blue-600">
+                  {groupedIssues.inProgress.length}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/issues?scope=assigned&status=resolved">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-green-600">
+                  {groupedIssues.resolved.length}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/issues?scope=assigned&status=closed">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">
+                  {groupedIssues.closed.length}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Issues by Status */}
@@ -179,6 +187,45 @@ function IssueCard({ issue }: { issue: any }) {
               {issue.description}
             </p>
           )}
+
+          {/* Timestamps */}
+          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <div className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="font-medium">Created:</span>
+              <time className="font-mono">
+                {new Date(issue.created_at).toLocaleString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+                })}
+              </time>
+            </div>
+            {issue.due_date && (
+              <div className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-medium">Due:</span>
+                <time className="font-mono">
+                  {new Date(issue.due_date).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                  })}
+                </time>
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-2 mt-2">
             <Badge
               variant={
@@ -193,6 +240,21 @@ function IssueCard({ issue }: { issue: any }) {
             <Badge variant={issue.status === 'open' ? 'warning' : issue.status === 'in_progress' ? 'info' : 'success'}>
               {issue.status.replace('_', ' ')}
             </Badge>
+            {(() => {
+              const dueDate = issue.due_date ? new Date(issue.due_date) : null;
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const isOverdue = dueDate && dueDate < today && issue.status !== 'closed' && issue.status !== 'resolved';
+              if (isOverdue) {
+                const daysOverdue = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+                return (
+                  <Badge variant="danger" className="animate-pulse font-semibold">
+                    🚨 {daysOverdue}d overdue
+                  </Badge>
+                );
+              }
+              return null;
+            })()}
           </div>
         </div>
       </div>

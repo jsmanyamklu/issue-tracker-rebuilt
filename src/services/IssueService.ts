@@ -399,6 +399,7 @@ export class IssueService {
     reportedByMe: number;
     openIssues: number;
     closedIssues: number;
+    overdueIssues: number;
   }> {
     const [assignedToMe, reportedByMe, allIssues] = await Promise.all([
       issueRepository.findByAssigneeId(userId),
@@ -410,11 +411,22 @@ export class IssueService {
     const openIssues = allIssues.filter((i) => i.status === 'open' || i.status === 'in_progress').length;
     const closedIssues = allIssues.filter((i) => i.status === 'closed' || i.status === 'resolved').length;
 
+    // Count overdue issues (due date passed and not closed/resolved)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const overdueIssues = allIssues.filter((i) => {
+      if (!i.due_date) return false;
+      const dueDate = new Date(i.due_date);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate < today && i.status !== 'closed' && i.status !== 'resolved';
+    }).length;
+
     return {
       assignedToMe: assignedToMe.length,
       reportedByMe: reportedByMe.length,
       openIssues,
       closedIssues,
+      overdueIssues,
     };
   }
 

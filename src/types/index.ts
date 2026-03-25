@@ -144,6 +144,7 @@ export interface IssueFilters {
   type?: IssueType;
   assignee_id?: string;
   reporter_id?: string;
+  user_id?: string; // For filtering issues where user is either assignee or reporter
 }
 
 // ==================== AI Types ====================

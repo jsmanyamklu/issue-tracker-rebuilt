@@ -30,10 +30,15 @@ export async function GET(request: NextRequest) {
       filters.type = searchParams.get('type') as any;
     }
     if (searchParams.has('assignee_id')) {
-      filters.assignee_id = searchParams.get('assignee_id')!;
+      const assigneeId = searchParams.get('assignee_id')!;
+      // Handle 'null' string for unassigned issues
+      filters.assignee_id = assigneeId === 'null' ? 'unassigned' : assigneeId;
     }
     if (searchParams.has('reporter_id')) {
       filters.reporter_id = searchParams.get('reporter_id')!;
+    }
+    if (searchParams.has('user_id')) {
+      filters.user_id = searchParams.get('user_id')!;
     }
 
     // Check if any filters are applied

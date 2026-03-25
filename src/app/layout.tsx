@@ -22,7 +22,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full bg-gray-50 dark:bg-gray-900 transition-colors`}>
+      <body
+        className={`${inter.className} h-full bg-gray-50 dark:bg-gray-900 transition-colors`}
+        suppressHydrationWarning
+      >
         <Providers session={session}>
           <Navigation />
           <KeyboardShortcuts />

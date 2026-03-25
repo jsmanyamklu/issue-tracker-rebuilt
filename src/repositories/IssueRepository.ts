@@ -55,9 +55,9 @@ export class IssueRepository {
                   'avatar_url', r.avatar_url
                 ) as reporter
          FROM issues i
-         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN projects p ON i.project_id = p.id
          LEFT JOIN users a ON i.assignee_id = a.id
-         JOIN users r ON i.reporter_id = r.id
+         LEFT JOIN users r ON i.reporter_id = r.id
          WHERE i.id = $1`,
         [id]
       );
@@ -105,9 +105,9 @@ export class IssueRepository {
                   'avatar_url', r.avatar_url
                 ) as reporter
          FROM issues i
-         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN projects p ON i.project_id = p.id
          LEFT JOIN users a ON i.assignee_id = a.id
-         JOIN users r ON i.reporter_id = r.id
+         LEFT JOIN users r ON i.reporter_id = r.id
          ORDER BY i.created_at DESC`
       );
       return result.rows;
@@ -146,13 +146,24 @@ export class IssueRepository {
       }
 
       if (filters.assignee_id) {
-        conditions.push(`i.assignee_id = $${paramIndex++}`);
-        params.push(filters.assignee_id);
+        if (filters.assignee_id === 'unassigned') {
+          conditions.push(`i.assignee_id IS NULL`);
+        } else {
+          conditions.push(`i.assignee_id = $${paramIndex++}`);
+          params.push(filters.assignee_id);
+        }
       }
 
       if (filters.reporter_id) {
         conditions.push(`i.reporter_id = $${paramIndex++}`);
         params.push(filters.reporter_id);
+      }
+
+      // user_id filter matches either assignee or reporter
+      if (filters.user_id) {
+        conditions.push(`(i.assignee_id = $${paramIndex} OR i.reporter_id = $${paramIndex})`);
+        params.push(filters.user_id);
+        paramIndex++;
       }
 
       const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -176,9 +187,9 @@ export class IssueRepository {
                   'avatar_url', r.avatar_url
                 ) as reporter
          FROM issues i
-         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN projects p ON i.project_id = p.id
          LEFT JOIN users a ON i.assignee_id = a.id
-         JOIN users r ON i.reporter_id = r.id
+         LEFT JOIN users r ON i.reporter_id = r.id
          ${whereClause}
          ORDER BY i.created_at DESC`,
         params
@@ -228,9 +239,9 @@ export class IssueRepository {
                   'avatar_url', r.avatar_url
                 ) as reporter
          FROM issues i
-         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN projects p ON i.project_id = p.id
          LEFT JOIN users a ON i.assignee_id = a.id
-         JOIN users r ON i.reporter_id = r.id
+         LEFT JOIN users r ON i.reporter_id = r.id
          WHERE i.assignee_id = $1
          ORDER BY i.created_at DESC`,
         [assigneeId]
@@ -352,9 +363,9 @@ export class IssueRepository {
                   'avatar_url', r.avatar_url
                 ) as reporter
          FROM issues i
-         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN projects p ON i.project_id = p.id
          LEFT JOIN users a ON i.assignee_id = a.id
-         JOIN users r ON i.reporter_id = r.id
+         LEFT JOIN users r ON i.reporter_id = r.id
          WHERE to_tsvector('english', i.title || ' ' || COALESCE(i.description, '')) @@ plainto_tsquery('english', $1)
          ORDER BY i.created_at DESC
          LIMIT 20`,
@@ -456,9 +467,9 @@ export class IssueRepository {
                   'avatar_url', r.avatar_url
                 ) as reporter
          FROM issues i
-         JOIN projects p ON i.project_id = p.id
+         LEFT JOIN projects p ON i.project_id = p.id
          LEFT JOIN users a ON i.assignee_id = a.id
-         JOIN users r ON i.reporter_id = r.id
+         LEFT JOIN users r ON i.reporter_id = r.id
          WHERE i.due_date IS NOT NULL
            AND i.due_date < CURRENT_DATE
            AND i.status NOT IN ('closed', 'resolved')

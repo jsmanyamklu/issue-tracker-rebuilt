@@ -26,6 +26,7 @@ async function getDashboardData(userId: string) {
         reportedByMe: 0,
         openIssues: 0,
         closedIssues: 0,
+        overdueIssues: 0,
       },
       recentIssues: [],
       projects: [],
@@ -53,39 +54,57 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-primary-600">
-                {summary.assignedToMe || 0}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Assigned to Me</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-green-600">
-                {summary.reportedByMe || 0}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Reported by Me</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
-                {summary.openIssues || 0}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Open Issues</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-gray-600 dark:text-gray-300">
-                {summary.closedIssues || 0}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Closed Issues</div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+          <Link href="/issues?scope=assigned">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-6">
+                <div className="text-3xl font-bold text-primary-600">
+                  {summary.assignedToMe || 0}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Assigned to Me</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/issues?scope=reported">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-6">
+                <div className="text-3xl font-bold text-green-600">
+                  {summary.reportedByMe || 0}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Reported by Me</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href={`/issues?status=open${user.role === 'admin' || user.role === 'manager' ? '&scope=all' : '&scope=my'}`}>
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-6">
+                <div className="text-3xl font-bold text-blue-600">
+                  {summary.openIssues || 0}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Open Issues</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href={`/issues?status=closed${user.role === 'admin' || user.role === 'manager' ? '&scope=all' : '&scope=my'}`}>
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardContent className="text-center py-6">
+                <div className="text-3xl font-bold text-gray-600 dark:text-gray-300">
+                  {summary.closedIssues || 0}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Closed Issues</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href={`/issues?overdue=true${user.role === 'admin' || user.role === 'manager' ? '&scope=all' : '&scope=my'}`}>
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 border-red-500 dark:border-red-600">
+              <CardContent className="text-center py-6">
+                <div className="text-3xl font-bold text-red-600 dark:text-red-500 animate-pulse">
+                  🚨 {summary.overdueIssues || 0}
+                </div>
+                <div className="text-sm text-red-700 dark:text-red-400 font-semibold mt-1">Overdue Issues</div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
