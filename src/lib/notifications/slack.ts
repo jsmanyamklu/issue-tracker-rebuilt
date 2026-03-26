@@ -227,19 +227,19 @@ export async function notifyOverdueIssue(
       text: `${emoji} Issue ${statusText}: ${issue.title}`,
       blocks: [
         {
-          type: 'section',
+          type: 'section' as const,
           text: {
-            type: 'mrkdwn',
+            type: 'mrkdwn' as const,
             text: `${emoji} *Issue ${statusText}*\n\n*${issue.title}*\n\nProject: ${issue.project.name}\nPriority: ${issue.priority.toUpperCase()}\nAssignee: ${issue.assignee?.name || 'Unassigned'}`,
           },
         },
         {
-          type: 'actions',
+          type: 'actions' as const,
           elements: [
             {
-              type: 'button',
+              type: 'button' as const,
               text: {
-                type: 'plain_text',
+                type: 'plain_text' as const,
                 text: 'View Issue',
               },
               url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/issues/${issue.id}`,
@@ -297,23 +297,23 @@ export async function notifyManagerEscalation(
       text: `🚨 ESCALATION: Issue ${daysOverdue} days overdue - Manager attention required`,
       blocks: [
         {
-          type: 'section',
+          type: 'section' as const,
           text: {
-            type: 'mrkdwn',
+            type: 'mrkdwn' as const,
             text: `🚨 *ESCALATION: Issue ${daysOverdue} Days Overdue*\n\n*${issue.title}*\n\nProject: ${issue.project.name}\nPriority: ${issue.priority.toUpperCase()}\nAssignee: ${issue.assignee?.name || 'Unassigned'}\nManager: ${manager.name}\n\n_This issue requires manager attention for reassignment or resolution._`,
           },
         },
         {
-          type: 'actions',
+          type: 'actions' as const,
           elements: [
             {
-              type: 'button',
+              type: 'button' as const,
               text: {
-                type: 'plain_text',
+                type: 'plain_text' as const,
                 text: 'Reassign Issue',
               },
               url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/issues/${issue.id}`,
-              style: 'danger',
+              style: 'danger' as const,
             },
           ],
         },

@@ -19,46 +19,46 @@ export function Navigation() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <nav className="glass sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary-600">
+            <Link href="/" className="flex items-center group">
+              <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 via-primary-700 to-accent-600 bg-clip-text text-transparent transition-all duration-300 group-hover:scale-105">
                 TaskForge
               </span>
             </Link>
 
             {/* Navigation links */}
             {session && (
-              <div className="hidden md:flex ml-10 space-x-4">
+              <div className="hidden md:flex ml-10 space-x-2">
                 <Link
                   href="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     isActive('/dashboard')
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/30'
+                      : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/projects"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     isActive('/projects') || pathname.startsWith('/projects/')
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/30'
+                      : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                   }`}
                 >
                   Projects
                 </Link>
                 <Link
                   href="/my-issues"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     isActive('/my-issues')
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/30'
+                      : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                   }`}
                 >
                   My Issues
@@ -66,10 +66,10 @@ export function Navigation() {
                 {(session.user.role === 'admin' || session.user.role === 'manager') && (
                   <Link
                     href="/admin"
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                       isActive('/admin') || pathname.startsWith('/admin/')
-                        ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                        : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10'
+                        ? 'bg-gradient-to-r from-danger-500 to-danger-600 text-white shadow-md shadow-danger-500/30'
+                        : 'text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/10'
                     }`}
                   >
                     {session.user.role === 'admin' ? 'Admin' : 'Admin'}
@@ -94,38 +94,38 @@ export function Navigation() {
                 const event = new KeyboardEvent('keydown', { key: '?' });
                 window.dispatchEvent(event);
               }}
-              className="hidden sm:flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group shadow-sm"
               title="Keyboard shortcuts (?)"
               aria-label="Show keyboard shortcuts"
             >
-              <span className="text-gray-500 group-hover:text-gray-700 dark:text-gray-200 text-lg font-medium">
+              <span className="text-neutral-600 group-hover:text-primary-600 dark:text-neutral-300 dark:group-hover:text-primary-400 text-lg font-bold transition-colors">
                 ?
               </span>
             </button>
 
             {session ? (
               <>
-                <div className="flex items-center gap-2">
-                  <UserAvatar size={32} />
+                <div className="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200">
+                  <UserAvatar size={36} />
                   <div className="hidden sm:block">
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">
                       {session.user.name}
                     </div>
                     {session.user.role && (
-                      <div className="text-xs text-gray-500 capitalize">
+                      <div className="text-xs text-neutral-600 dark:text-neutral-400 capitalize font-medium">
                         {session.user.role}
                       </div>
                     )}
                   </div>
                 </div>
-                <SignOutButton className="text-sm text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:text-gray-300">
+                <SignOutButton className="text-sm font-semibold text-neutral-700 dark:text-neutral-200 hover:text-danger-600 dark:hover:text-danger-400 transition-colors">
                   Sign Out
                 </SignOutButton>
               </>
             ) : (
               <Link
                 href="/auth/signin"
-                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700"
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg hover:from-primary-700 hover:to-primary-800 shadow-md hover:shadow-lg transition-all duration-200 active:scale-95"
               >
                 Sign In
               </Link>

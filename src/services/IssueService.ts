@@ -105,6 +105,18 @@ export class IssueService {
       throw new NotFoundError('Project');
     }
 
+    // Validate issue due date against project due date
+    if (data.due_date && project.due_date) {
+      const issueDueDate = new Date(data.due_date);
+      const projectDueDate = new Date(project.due_date);
+
+      if (issueDueDate > projectDueDate) {
+        throw new ValidationError(
+          `Issue due date (${issueDueDate.toLocaleDateString()}) cannot be after project due date (${projectDueDate.toLocaleDateString()})`
+        );
+      }
+    }
+
     // Verify reporter exists and check permission
     const reporter = await userRepository.findById(data.reporter_id);
     if (!reporter) {
@@ -159,7 +171,6 @@ export class IssueService {
         title: issue.title,
         project_id: issue.project_id,
         priority: issue.priority,
-        auto_assigned: wasAutoAssigned,
       }
     ).catch(err => console.error('Failed to log issue creation:', err));
 
@@ -247,6 +258,21 @@ export class IssueService {
     if (data.priority !== undefined && data.priority !== existingIssue.priority) {
       if (!IssuePermissions.canChangePriority(user.role)) {
         throw new ForbiddenError('You do not have permission to change issue priority');
+      }
+    }
+
+    // Validate issue due date against project due date
+    if (data.due_date !== undefined) {
+      const project = await projectRepository.findById(existingIssue.project_id);
+      if (project && project.due_date && data.due_date) {
+        const issueDueDate = new Date(data.due_date);
+        const projectDueDate = new Date(project.due_date);
+
+        if (issueDueDate > projectDueDate) {
+          throw new ValidationError(
+            `Issue due date (${issueDueDate.toLocaleDateString()}) cannot be after project due date (${projectDueDate.toLocaleDateString()})`
+          );
+        }
       }
     }
 

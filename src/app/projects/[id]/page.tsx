@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { notFound } from 'next/navigation';
 import { projectService, issueService } from '@/services';
 import { DeleteProjectButton } from '@/components/projects/DeleteProjectButton';
+import ExtendProjectDueDateButton from '@/components/projects/ExtendProjectDueDateButton';
 
 async function getProject(id: string) {
   try {
@@ -97,6 +98,13 @@ export default async function ProjectDetailPage({
               <Link href={`/issues/new?project_id=${project.id}`}>
                 <Button>+ New Issue</Button>
               </Link>
+              <ExtendProjectDueDateButton
+                projectId={project.id}
+                projectName={project.name}
+                currentDueDate={project.due_date || null}
+                userRole={user.role}
+                openIssuesCount={stats.open + stats.inProgress}
+              />
               {isOwner && (
                 <Link href={`/projects/${project.id}/edit`}>
                   <Button variant="secondary">Edit Project</Button>

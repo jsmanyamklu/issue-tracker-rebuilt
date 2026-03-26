@@ -62,18 +62,18 @@ export class NotificationService {
     for (const { issue, days_overdue, manager_escalated } of overdueIssues) {
       try {
         // Send notification to assignee
-        if (issue.assignee) {
-          await notifyOverdueIssue(issue, days_overdue);
+        if (issue.assignee && issue.due_date) {
+          await notifyOverdueIssue(issue as IssueWithRelations & { due_date: string }, days_overdue);
           sent++;
         }
 
         // Escalate to manager if overdue for more than 3 days
-        if (manager_escalated) {
+        if (manager_escalated && issue.due_date) {
           const project = await projectRepository.findById(issue.project_id);
           if (project) {
             const projectOwner = await userRepository.findById(project.owner_id);
             if (projectOwner && (projectOwner.role === UserRole.MANAGER || projectOwner.role === UserRole.ADMIN)) {
-              await notifyManagerEscalation(issue, days_overdue, projectOwner);
+              await notifyManagerEscalation(issue as IssueWithRelations & { due_date: string }, days_overdue, projectOwner);
               escalated++;
             }
           }
@@ -118,13 +118,13 @@ export class NotificationService {
 
     for (const issue of approachingIssues) {
       try {
-        if (issue.assignee) {
-          const dueDate = new Date(issue.due_date!);
+        if (issue.assignee && issue.due_date) {
+          const dueDate = new Date(issue.due_date);
           const now = new Date();
           const daysRemaining = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
           // Send Slack notification
-          await notifyOverdueIssue(issue, -daysRemaining); // Negative means days until due
+          await notifyOverdueIssue(issue as IssueWithRelations & { due_date: string }, -daysRemaining); // Negative means days until due
           sent++;
         }
       } catch (error) {

@@ -44,13 +44,15 @@ export default async function ProjectsPage() {
   const isAdmin = user.role === 'admin';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/30 to-accent-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 animate-fade-in">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-neutral-900 via-primary-700 to-accent-700 dark:from-white dark:via-primary-400 dark:to-accent-400 bg-clip-text text-transparent">
+              Projects
+            </h1>
+            <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
               Manage your projects and track issues
             </p>
           </div>
@@ -67,19 +69,20 @@ export default async function ProjectsPage() {
         {/* Projects Grid */}
         {projects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project: any) => {
+            {projects.map((project: any, index: number) => {
               const canDelete = project.owner_id === user.id || isAdmin;
               return (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  canDelete={canDelete}
-                />
+                <div key={project.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                  <ProjectCard
+                    project={project}
+                    canDelete={canDelete}
+                  />
+                </div>
               );
             })}
           </div>
         ) : (
-          <Card>
+          <Card className="animate-fade-in">
             <CardContent>
               <NoProjects />
             </CardContent>

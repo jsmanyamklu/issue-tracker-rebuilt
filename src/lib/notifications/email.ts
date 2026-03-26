@@ -187,9 +187,15 @@ export async function notifyOverdueIssues(issues: IssueWithRelations[]): Promise
   // Send consolidated Slack notification
   if (issues.length > 0) {
     try {
-      await notifyOverdueIssuesSlack(issues);
-      slackSent = true;
-      console.log('✅ Slack notification sent for overdue issues');
+      // Filter issues with due_date for Slack notification
+      const issuesWithDueDate = issues.filter((issue): issue is IssueWithRelations & { due_date: string } =>
+        issue.due_date !== undefined && issue.due_date !== null
+      );
+      if (issuesWithDueDate.length > 0) {
+        await notifyOverdueIssuesSlack(issuesWithDueDate);
+        slackSent = true;
+        console.log('✅ Slack notification sent for overdue issues');
+      }
     } catch (error) {
       console.error('❌ Failed to send Slack notification for overdue issues:', error);
       // Don't fail the entire operation if Slack fails

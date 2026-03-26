@@ -19,7 +19,7 @@ import { projectRepository } from '@/repositories/ProjectRepository';
 /**
  * Service for activity logging and analytics
  */
-class ActivityLogService {
+export class ActivityLogService {
   /**
    * Log an activity
    */
@@ -205,7 +205,7 @@ class ActivityLogService {
    */
   private async getIssueMetrics(): Promise<IssueMetrics> {
     // Get all issues with their current state
-    const issues = await issueRepository.findAll({});
+    const issues = await issueRepository.findAll();
 
     const now = new Date();
     const total_issues = issues.length;
@@ -368,7 +368,7 @@ class ActivityLogService {
     const projectsWithIssues = new Set<string>();
     const projectsWithOverdue = new Set<string>();
 
-    const allIssues = await issueRepository.findAll({});
+    const allIssues = await issueRepository.findAll();
     const now = new Date();
 
     for (const issue of allIssues) {

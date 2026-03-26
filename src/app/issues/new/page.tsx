@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
+import { DatePicker } from '@/components/ui/DatePicker';
+import { IssueTitleSuggestions } from '@/components/ui/IssueTitleSuggestions';
 
 export default function NewIssuePage() {
   const router = useRouter();
@@ -15,7 +17,8 @@ export default function NewIssuePage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [projects, setProjects] = useState<Array<{ id: string; name: string }>>([]);
+  const [projects, setProjects] = useState<Array<{ id: string; name: string; due_date?: string }>>([]);
+  const [selectedProject, setSelectedProject] = useState<{ id: string; name: string; due_date?: string } | null>(null);
   const [users, setUsers] = useState<Array<{ id: string; name: string; email: string }>>([]);
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; role: string } | null>(null);
   const [workloads, setWorkloads] = useState<Record<string, { total_issues: number; workload_score: number }>>({});
@@ -89,6 +92,19 @@ export default function NewIssuePage() {
     fetchData();
   }, []);
 
+  // Fetch project details when project is selected
+  useEffect(() => {
+    if (!formData.project_id) {
+      setSelectedProject(null);
+      return;
+    }
+
+    const project = projects.find(p => p.id === formData.project_id);
+    if (project) {
+      setSelectedProject(project);
+    }
+  }, [formData.project_id, projects]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -110,6 +126,18 @@ export default function NewIssuePage() {
         setError('Expected closure date cannot be in the past');
         setIsLoading(false);
         return;
+      }
+
+      // Validate issue due date is before project due date
+      if (selectedProject && selectedProject.due_date) {
+        const projectDueDate = new Date(selectedProject.due_date);
+        if (selectedDate > projectDueDate) {
+          setError(
+            `Issue due date (${selectedDate.toLocaleDateString()}) cannot be after project due date (${projectDueDate.toLocaleDateString()})`
+          );
+          setIsLoading(false);
+          return;
+        }
       }
     }
 
@@ -138,18 +166,18 @@ export default function NewIssuePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card>
-          <CardHeader>
-            <CardTitle>Create New Issue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
-                  {error}
-                </div>
-              )}
+              <CardHeader>
+                <CardTitle>Create New Issue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
+                      {error}
+                    </div>
+                  )}
 
-              <Select
+                  <Select
                 label="Project"
                 options={[
                   { value: '', label: 'Select a project' },
@@ -162,13 +190,13 @@ export default function NewIssuePage() {
                 required
               />
 
-              <Input
-                label="Title"
-                placeholder="Enter issue title"
+              <IssueTitleSuggestions
+                projectId={formData.project_id}
                 value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
+                onChange={(title) =>
+                  setFormData({ ...formData, title })
                 }
+                placeholder="Enter issue title"
                 required
               />
 
@@ -279,15 +307,26 @@ export default function NewIssuePage() {
                 }
               />
 
-              <Input
-                type="date"
-                label="Expected Closure Date (Optional)"
-                value={formData.due_date}
-                onChange={(e) =>
-                  setFormData({ ...formData, due_date: e.target.value })
-                }
-                min={new Date().toISOString().split('T')[0]}
-              />
+              <div>
+                <DatePicker
+                  label="Expected Closure Date (Optional)"
+                  value={formData.due_date}
+                  onChange={(date) =>
+                    setFormData({ ...formData, due_date: date })
+                  }
+                  minDate={new Date().toISOString().split('T')[0]}
+                  maxDate={selectedProject?.due_date || undefined}
+                  placeholder="Select expected closure date"
+                />
+                {selectedProject?.due_date && (
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    ℹ️ Issue due date must be on or before project due date:{' '}
+                    <span className="font-semibold text-primary-600 dark:text-primary-400">
+                      {new Date(selectedProject.due_date).toLocaleDateString()}
+                    </span>
+                  </p>
+                )}
+              </div>
 
               <div className="flex gap-4">
                 <Button type="submit" isLoading={isLoading}>

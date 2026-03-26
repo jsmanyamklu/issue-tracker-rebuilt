@@ -38,3 +38,6 @@ next-env.d.ts
 .idea
 *.swp
 *.swo
+
+# Uploads (file attachments - local storage for prototype)
+/public/uploads

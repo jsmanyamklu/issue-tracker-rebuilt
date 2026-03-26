@@ -236,13 +236,15 @@ export default function IssuesPage() {
   } as const;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/30 to-accent-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 animate-fade-in">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Issues</h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">Track and manage all issues</p>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-neutral-900 via-primary-700 to-accent-700 dark:from-white dark:via-primary-400 dark:to-accent-400 bg-clip-text text-transparent">
+              Issues
+            </h1>
+            <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">Track and manage all issues</p>
           </div>
           <Link href="/issues/new">
             <Button>+ New Issue</Button>
@@ -258,10 +260,10 @@ export default function IssuesPage() {
             }}
             className="block w-full"
           >
-            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'all' && !overdueFilter ? 'ring-2 ring-primary-500' : ''}`}>
+            <Card className={`cursor-pointer transition-all hover:scale-105 active:scale-95 ${statusFilter === 'all' && !overdueFilter ? 'ring-2 ring-primary-500 shadow-glow' : ''}`}>
               <CardContent className="text-center py-4">
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Total</div>
+                <div className="text-3xl font-bold bg-gradient-to-br from-neutral-800 to-neutral-600 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent">{stats.total}</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold mt-1">Total</div>
               </CardContent>
             </Card>
           </button>
@@ -272,10 +274,10 @@ export default function IssuesPage() {
             }}
             className="block w-full"
           >
-            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'open' ? 'ring-2 ring-yellow-500' : ''}`}>
+            <Card className={`cursor-pointer transition-all hover:scale-105 active:scale-95 ${statusFilter === 'open' ? 'ring-2 ring-warning-500 shadow-glow' : ''}`}>
               <CardContent className="text-center py-4">
-                <div className="text-2xl font-bold text-yellow-600">{stats.open}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
+                <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{stats.open}</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold mt-1">Open</div>
               </CardContent>
             </Card>
           </button>
@@ -286,10 +288,10 @@ export default function IssuesPage() {
             }}
             className="block w-full"
           >
-            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'in_progress' ? 'ring-2 ring-blue-500' : ''}`}>
+            <Card className={`cursor-pointer transition-all hover:scale-105 active:scale-95 ${statusFilter === 'in_progress' ? 'ring-2 ring-primary-500 shadow-glow' : ''}`}>
               <CardContent className="text-center py-4">
-                <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
+                <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{stats.inProgress}</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold mt-1">In Progress</div>
               </CardContent>
             </Card>
           </button>
@@ -300,10 +302,10 @@ export default function IssuesPage() {
             }}
             className="block w-full"
           >
-            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'resolved' ? 'ring-2 ring-green-500' : ''}`}>
+            <Card className={`cursor-pointer transition-all hover:scale-105 active:scale-95 ${statusFilter === 'resolved' ? 'ring-2 ring-success-500 shadow-glow' : ''}`}>
               <CardContent className="text-center py-4">
-                <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
+                <div className="text-3xl font-bold text-success-600 dark:text-success-400">{stats.resolved}</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold mt-1">Resolved</div>
               </CardContent>
             </Card>
           </button>
@@ -314,10 +316,10 @@ export default function IssuesPage() {
             }}
             className="block w-full"
           >
-            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'closed' ? 'ring-2 ring-gray-500' : ''}`}>
+            <Card className={`cursor-pointer transition-all hover:scale-105 active:scale-95 ${statusFilter === 'closed' ? 'ring-2 ring-neutral-500 shadow-glow' : ''}`}>
               <CardContent className="text-center py-4">
-                <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.closed}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
+                <div className="text-3xl font-bold text-neutral-600 dark:text-neutral-400">{stats.closed}</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold mt-1">Closed</div>
               </CardContent>
             </Card>
           </button>
@@ -329,12 +331,12 @@ export default function IssuesPage() {
               }}
               className="block w-full"
             >
-              <Card className={`cursor-pointer transition-all hover:shadow-lg border-2 border-red-500 dark:border-red-600 ${overdueFilter ? 'ring-2 ring-red-500' : ''}`}>
+              <Card className={`cursor-pointer transition-all hover:scale-105 active:scale-95 border-2 border-danger-500 dark:border-danger-600 ${overdueFilter ? 'ring-2 ring-danger-500 shadow-glow' : ''}`}>
                 <CardContent className="text-center py-4">
-                  <div className="text-2xl font-bold text-red-600 dark:text-red-500 animate-pulse">
+                  <div className="text-3xl font-bold text-danger-600 dark:text-danger-400 animate-pulse">
                     🚨 {stats.overdue}
                   </div>
-                  <div className="text-sm text-red-700 dark:text-red-400 font-semibold">Overdue</div>
+                  <div className="text-sm text-danger-700 dark:text-danger-300 font-bold mt-1">Overdue</div>
                 </CardContent>
               </Card>
             </button>

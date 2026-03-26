@@ -71,10 +71,27 @@ TaskForge is a **production-grade issue tracking system** designed for modern de
 - ⏰ **Due Date Management**
   - Issue-level due dates with past date validation
   - **Project-level deadlines** - Track overall project completion targets
+  - **Project due date extension** - Admin/Manager can extend overdue projects
+  - **Smart validation** - Issue due dates cannot exceed project deadlines
+  - **Calendar date picker** - Visual calendar popup for selecting dates
   - Overdue tracking and alerts for both issues and projects
   - Visual indicators with pulsing badges
   - Risk detection (warns if issues extend beyond project deadline)
   - Days overdue/remaining calculation and display
+
+- 📎 **File Attachments**
+  - Upload files to issues and comments
+  - Support for images, documents (PDF, Word, Excel), and text files
+  - 10MB file size limit (configurable)
+  - Image previews and file icons
+  - Local storage for prototype (ready for Vercel Blob/Supabase/S3)
+  - Secure file handling with validation
+
+- 💡 **Issue Title Suggestions**
+  - Recent issues dropdown on title field
+  - Custom title templates per project
+  - Quick detection of duplicate issues
+  - Saved custom titles for common patterns
 
 - 🤖 **Activity Logging & AI Analytics**
   - Comprehensive audit trail of all system activities

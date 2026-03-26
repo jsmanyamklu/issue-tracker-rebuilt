@@ -38,6 +38,18 @@ Complete guide to all documentation resources.
 
 ---
 
+## 🚀 Production & Scaling
+
+| Document | Description | For |
+|----------|-------------|-----|
+| [**Deployment Quick Start**](DEPLOYMENT_QUICK_START.md) | Deploy to production in 30 minutes | DevOps, Managers |
+| [**Client Upgrade Options**](CLIENT_UPGRADE_OPTIONS.md) | Executive summary of upgrade packages & pricing | Clients, Executives, Sales |
+| [**Future Upgrades Roadmap**](FUTURE_UPGRADES_ROADMAP.md) | Comprehensive technical upgrade roadmap | Stakeholders, Developers |
+
+**👆 NEW:** Production deployment guide, client-facing upgrade packages, and complete technical roadmap for mobile apps, PWA, AI features, enterprise scaling, and more!
+
+---
+
 ## 🏗️ Technical Documentation
 
 | Document | Description | For |

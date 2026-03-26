@@ -522,14 +522,14 @@ export class SlackService {
 
     // Add action button to view all overdue issues
     blocks.push(
-      { type: 'divider' },
+      { type: 'divider' as const },
       {
-        type: 'context',
+        type: 'context' as const,
         elements: [
           {
-            type: 'mrkdwn',
+            type: 'mrkdwn' as const,
             text: '💡 _Please review these issues and update their status or due dates accordingly._',
-          },
+          } as any,
         ],
       }
     );

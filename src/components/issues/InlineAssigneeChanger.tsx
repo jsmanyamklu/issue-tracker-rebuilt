@@ -82,7 +82,7 @@ export default function InlineAssigneeChanger({
         );
 
         const usersWithWorkload = usersData.data.map((u: any) => {
-          const workload = workloadMap.get(u.id);
+          const workload = workloadMap.get(u.id) as { total_issues: number; workload_score: number } | undefined;
           return {
             id: u.id,
             name: u.name,
