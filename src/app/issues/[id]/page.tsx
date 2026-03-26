@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { notFound } from 'next/navigation';
 import { issueService, commentService } from '@/services';
+import ReassignIssueButton from '@/components/issues/ReassignIssueButton';
+import InlineAssigneeChanger from '@/components/issues/InlineAssigneeChanger';
+import IssueActivityLog from '@/components/issues/IssueActivityLog';
 
 async function getIssue(id: string) {
   try {
@@ -96,6 +99,16 @@ export default async function IssueDetailPage({
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{issue.title}</h1>
             </div>
             <div className="flex gap-2">
+              {(user.role === 'admin' || user.role === 'manager') && (
+                <ReassignIssueButton
+                  issueId={issue.id}
+                  currentAssigneeId={issue.assignee_id}
+                  currentAssigneeName={issue.assignee?.name}
+                  reporterId={issue.reporter_id}
+                  userRole={user.role}
+                  issueStatus={issue.status}
+                />
+              )}
               {(isReporter || isAssignee) && (
                 <Link href={`/issues/${issue.id}/edit`}>
                   <Button variant="secondary">Edit Issue</Button>
@@ -159,17 +172,18 @@ export default async function IssueDetailPage({
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-2">
                       🎯 Assigned To
                     </div>
-                    {issue.assignee ? (
-                      <>
-                        <div className="font-semibold text-gray-900 dark:text-white truncate">{issue.assignee.name}</div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 truncate">{issue.assignee.email}</div>
-                      </>
-                    ) : (
-                      <div className="text-gray-500 dark:text-gray-400 italic font-medium">Not Assigned Yet</div>
-                    )}
+                    <InlineAssigneeChanger
+                      issueId={issue.id}
+                      currentAssigneeId={issue.assignee_id}
+                      currentAssigneeName={issue.assignee?.name}
+                      currentAssigneeAvatar={issue.assignee?.avatar_url}
+                      reporterId={issue.reporter_id}
+                      userRole={user.role}
+                      issueStatus={issue.status}
+                    />
                   </div>
                 </div>
 
@@ -354,6 +368,9 @@ export default async function IssueDetailPage({
             )}
           </CardContent>
         </Card>
+
+        {/* Activity Log */}
+        <IssueActivityLog issueId={issue.id} />
       </div>
     </div>
   );

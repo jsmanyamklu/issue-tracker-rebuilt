@@ -86,7 +86,8 @@ export default function AdminPage() {
     }
   };
 
-  const getRoleBadgeVariant = (role: UserRole) => {
+  const getRoleBadgeVariant = (role: UserRole | undefined) => {
+    if (!role) return 'default';
     switch (role) {
       case UserRole.ADMIN:
         return 'danger';
@@ -96,10 +97,13 @@ export default function AdminPage() {
         return 'success';
       case UserRole.VIEWER:
         return 'default';
+      default:
+        return 'default';
     }
   };
 
-  const getRoleName = (role: UserRole) => {
+  const getRoleName = (role: UserRole | undefined) => {
+    if (!role) return 'Unknown';
     return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
@@ -145,7 +149,7 @@ export default function AdminPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card>
             <CardContent>
@@ -160,16 +164,26 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-300">Manage user roles and permissions</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">Manage user roles and permissions</p>
+            </div>
+            <a
+              href="/admin/analytics"
+              className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium shadow-lg"
+            >
+              📊 View Analytics & Performance
+            </a>
+          </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300">
             {error}
           </div>
         )}
@@ -262,7 +276,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <Badge variant="danger">Admin</Badge>
-                <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>• Full system access</li>
                   <li>• Manage user roles</li>
                   <li>• Edit/delete anything</li>
@@ -270,7 +284,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <Badge variant="info">Manager</Badge>
-                <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>• Manage all issues</li>
                   <li>• Assign tasks</li>
                   <li>• Close any issue</li>
@@ -278,7 +292,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <Badge variant="success">Developer</Badge>
-                <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>• Work on assigned issues</li>
                   <li>• Create issues/comments</li>
                   <li>• Edit own content</li>
@@ -286,7 +300,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <Badge variant="default">Viewer</Badge>
-                <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>• Read-only access</li>
                   <li>• View all content</li>
                   <li>• No modifications</li>
@@ -306,7 +320,7 @@ export default function AdminPage() {
               {users.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-gray-900"
+                  className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800/50"
                 >
                   <div className="flex items-center gap-4 flex-1">
                     {user.avatar_url && (
@@ -327,12 +341,12 @@ export default function AdminPage() {
 
                   <div className="flex items-center gap-2 ml-4">
                     <select
-                      value={user.role}
+                      value={user.role || UserRole.DEVELOPER}
                       onChange={(e) =>
                         updateUserRole(user.id, e.target.value as UserRole)
                       }
                       disabled={updatingUserId === user.id}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value={UserRole.ADMIN}>Admin</option>
                       <option value={UserRole.MANAGER}>Manager</option>

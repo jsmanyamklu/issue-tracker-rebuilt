@@ -121,6 +121,36 @@ export const IssuePermissions = {
   },
 
   /**
+   * Can user assign this issue to a specific assignee?
+   * More granular permission check for self-assignment and reassignment
+   */
+  canAssignTo(
+    userRole: UserRole,
+    userId: string,
+    targetAssigneeId: string,
+    issue?: Issue
+  ): boolean {
+    // Admins and Managers can assign to anyone
+    if (isAdminOrManager(userRole)) {
+      return true;
+    }
+
+    // Developers can self-assign if they are the reporter
+    if (userRole === UserRole.DEVELOPER) {
+      // Self-assignment allowed if user is assigning to themselves AND they're the reporter
+      if (targetAssigneeId === userId && issue && issue.reporter_id === userId) {
+        return true;
+      }
+      // For new issues without existing issue object, allow self-assignment by default
+      if (targetAssigneeId === userId && !issue) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+  /**
    * Can user close this issue?
    */
   canClose(userRole: UserRole, userId: string, issue: Issue): boolean {

@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-03-26T07:16:06.346Z",
+  "duration": 19111,
+  "server_available": true,
+  "suites": [
+    {
+      "name": "API Endpoint Tests",
+      "file": "C:\\Users\\Subrahmanyam J\\issue-tracker-rebuilt\\tests\\api-tests.ts"
+    },
+    {
+      "name": "Integration Tests",
+      "file": "C:\\Users\\Subrahmanyam J\\issue-tracker-rebuilt\\tests\\integration-tests.ts"
+    }
+  ],
+  "overall": {
+    "total_tests": 0,
+    "passed": 0,
+    "failed": 0,
+    "success_rate": 0
+  }
+}

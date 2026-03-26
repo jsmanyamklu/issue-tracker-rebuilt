@@ -63,16 +63,16 @@ export function Navigation() {
                 >
                   My Issues
                 </Link>
-                {session.user.role === 'admin' && (
+                {(session.user.role === 'admin' || session.user.role === 'manager') && (
                   <Link
                     href="/admin"
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive('/admin')
-                        ? 'bg-red-100 text-red-700'
-                        : 'text-red-600 hover:bg-red-50'
+                      isActive('/admin') || pathname.startsWith('/admin/')
+                        ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                        : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10'
                     }`}
                   >
-                    Admin Panel
+                    {session.user.role === 'admin' ? 'Admin' : 'Admin'}
                   </Link>
                 )}
               </div>

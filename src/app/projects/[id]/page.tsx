@@ -29,12 +29,17 @@ async function getProjectIssues(id: string) {
 
 export default async function ProjectDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const user = await getCurrentUser();
   const { id } = await params;
-  const [project, issues] = await Promise.all([
+  const filters = await searchParams;
+  const statusFilter = filters.status as string | undefined;
+
+  const [project, allIssues] = await Promise.all([
     getProject(id),
     getProjectIssues(id),
   ]);
@@ -50,7 +55,7 @@ export default async function ProjectDetailPage({
   // Calculate overdue issues
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const overdueIssues = issues.filter((i: any) =>
+  const overdueIssues = allIssues.filter((i: any) =>
     i.due_date &&
     new Date(i.due_date) < today &&
     i.status !== 'closed' &&
@@ -58,13 +63,23 @@ export default async function ProjectDetailPage({
   );
 
   const stats = {
-    total: issues.length,
-    open: issues.filter((i: any) => i.status === 'open').length,
-    inProgress: issues.filter((i: any) => i.status === 'in_progress').length,
-    resolved: issues.filter((i: any) => i.status === 'resolved').length,
-    closed: issues.filter((i: any) => i.status === 'closed').length,
+    total: allIssues.length,
+    open: allIssues.filter((i: any) => i.status === 'open').length,
+    inProgress: allIssues.filter((i: any) => i.status === 'in_progress').length,
+    resolved: allIssues.filter((i: any) => i.status === 'resolved').length,
+    closed: allIssues.filter((i: any) => i.status === 'closed').length,
     overdue: overdueIssues.length,
   };
+
+  // Filter issues based on status
+  let issues = allIssues;
+  if (statusFilter) {
+    if (statusFilter === 'overdue') {
+      issues = overdueIssues;
+    } else {
+      issues = allIssues.filter((i: any) => i.status === statusFilter);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -105,7 +120,7 @@ export default async function ProjectDetailPage({
             const daysUntil = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
             // Check if any issues are due after project deadline
-            const issuesAfterDeadline = issues.filter((i: any) =>
+            const issuesAfterDeadline = allIssues.filter((i: any) =>
               i.due_date && new Date(i.due_date) > dueDate
             );
 
@@ -168,54 +183,78 @@ export default async function ProjectDetailPage({
           })()}
         </div>
 
-        {/* Stats */}
+        {/* Stats - Clickable Filters */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold">{stats.total}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Total</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-yellow-600">{stats.open}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center py-4">
-              <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.closed}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
-            </CardContent>
-          </Card>
-          {stats.overdue > 0 && (
-            <Card className="border-2 border-red-500 dark:border-red-600">
+          <Link href={`/projects/${project.id}`} className="block">
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${!statusFilter ? 'ring-2 ring-primary-500' : ''}`}>
               <CardContent className="text-center py-4">
-                <div className="text-2xl font-bold text-red-600 dark:text-red-500 animate-pulse">
-                  🚨 {stats.overdue}
-                </div>
-                <div className="text-sm text-red-700 dark:text-red-400 font-semibold">Overdue</div>
+                <div className="text-2xl font-bold">{stats.total}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Total</div>
               </CardContent>
             </Card>
+          </Link>
+          <Link href={`/projects/${project.id}?status=open`} className="block">
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'open' ? 'ring-2 ring-yellow-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-yellow-600">{stats.open}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href={`/projects/${project.id}?status=in_progress`} className="block">
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'in_progress' ? 'ring-2 ring-blue-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href={`/projects/${project.id}?status=resolved`} className="block">
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'resolved' ? 'ring-2 ring-green-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href={`/projects/${project.id}?status=closed`} className="block">
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'closed' ? 'ring-2 ring-gray-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.closed}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
+              </CardContent>
+            </Card>
+          </Link>
+          {stats.overdue > 0 && (
+            <Link href={`/projects/${project.id}?status=overdue`} className="block">
+              <Card className={`cursor-pointer transition-all hover:shadow-lg border-2 border-red-500 dark:border-red-600 ${statusFilter === 'overdue' ? 'ring-2 ring-red-500' : ''}`}>
+                <CardContent className="text-center py-4">
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-500 animate-pulse">
+                    🚨 {stats.overdue}
+                  </div>
+                  <div className="text-sm text-red-700 dark:text-red-400 font-semibold">Overdue</div>
+                </CardContent>
+              </Card>
+            </Link>
           )}
         </div>
 
         {/* Issues List */}
         <Card>
           <CardHeader>
-            <CardTitle>Issues</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Issues</CardTitle>
+              {statusFilter && (
+                <div className="flex items-center gap-2">
+                  <Badge variant="info" className="text-sm">
+                    Filtered: {statusFilter === 'in_progress' ? 'In Progress' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} ({issues.length})
+                  </Badge>
+                  <Link href={`/projects/${project.id}`}>
+                    <Button variant="secondary" size="sm">Clear Filter</Button>
+                  </Link>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {issues.length > 0 ? (
@@ -382,10 +421,22 @@ export default async function ProjectDetailPage({
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-500 dark:text-gray-400 mb-4">No issues in this project yet</p>
-                <Link href={`/issues/new?project_id=${project.id}`}>
-                  <Button>Create First Issue</Button>
-                </Link>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  {statusFilter
+                    ? `No ${statusFilter === 'in_progress' ? 'in progress' : statusFilter} issues found`
+                    : 'No issues in this project yet'
+                  }
+                </p>
+                {!statusFilter && (
+                  <Link href={`/issues/new?project_id=${project.id}`}>
+                    <Button>Create First Issue</Button>
+                  </Link>
+                )}
+                {statusFilter && (
+                  <Link href={`/projects/${project.id}`}>
+                    <Button variant="secondary">View All Issues</Button>
+                  </Link>
+                )}
               </div>
             )}
           </CardContent>

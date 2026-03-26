@@ -201,12 +201,34 @@ export class IssueRepository {
   }
 
   /**
-   * Get issues by project ID
+   * Get issues by project ID with relations
    */
-  async findByProjectId(projectId: string): Promise<Issue[]> {
+  async findByProjectId(projectId: string): Promise<IssueWithRelations[]> {
     try {
-      const result = await query<Issue>(
-        'SELECT * FROM issues WHERE project_id = $1 ORDER BY created_at DESC',
+      const result = await query<IssueWithRelations>(
+        `SELECT i.*,
+                json_build_object(
+                  'id', p.id,
+                  'name', p.name
+                ) as project,
+                json_build_object(
+                  'id', a.id,
+                  'name', a.name,
+                  'email', a.email,
+                  'avatar_url', a.avatar_url
+                ) as assignee,
+                json_build_object(
+                  'id', r.id,
+                  'name', r.name,
+                  'email', r.email,
+                  'avatar_url', r.avatar_url
+                ) as reporter
+         FROM issues i
+         LEFT JOIN projects p ON i.project_id = p.id
+         LEFT JOIN users a ON i.assignee_id = a.id
+         LEFT JOIN users r ON i.reporter_id = r.id
+         WHERE i.project_id = $1
+         ORDER BY i.created_at DESC`,
         [projectId]
       );
       return result.rows;
@@ -253,12 +275,34 @@ export class IssueRepository {
   }
 
   /**
-   * Get issues reported by a user
+   * Get issues reported by a user with relations
    */
-  async findByReporterId(reporterId: string): Promise<Issue[]> {
+  async findByReporterId(reporterId: string): Promise<IssueWithRelations[]> {
     try {
-      const result = await query<Issue>(
-        'SELECT * FROM issues WHERE reporter_id = $1 ORDER BY created_at DESC',
+      const result = await query<IssueWithRelations>(
+        `SELECT i.*,
+                json_build_object(
+                  'id', p.id,
+                  'name', p.name
+                ) as project,
+                json_build_object(
+                  'id', a.id,
+                  'name', a.name,
+                  'email', a.email,
+                  'avatar_url', a.avatar_url
+                ) as assignee,
+                json_build_object(
+                  'id', r.id,
+                  'name', r.name,
+                  'email', r.email,
+                  'avatar_url', r.avatar_url
+                ) as reporter
+         FROM issues i
+         LEFT JOIN projects p ON i.project_id = p.id
+         LEFT JOIN users a ON i.assignee_id = a.id
+         LEFT JOIN users r ON i.reporter_id = r.id
+         WHERE i.reporter_id = $1
+         ORDER BY i.created_at DESC`,
         [reporterId]
       );
       return result.rows;

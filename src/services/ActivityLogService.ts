@@ -1,4 +1,4 @@
-import activityLogRepository from '@/repositories/ActivityLogRepository';
+import { activityLogRepository } from '@/repositories/ActivityLogRepository';
 import {
   ActivityLog,
   ActivityLogWithUser,
@@ -12,9 +12,9 @@ import {
   ProjectMetrics,
   PerformanceMetrics,
 } from '@/types';
-import issueRepository from '@/repositories/IssueRepository';
-import userRepository from '@/repositories/UserRepository';
-import projectRepository from '@/repositories/ProjectRepository';
+import { issueRepository } from '@/repositories/IssueRepository';
+import { userRepository } from '@/repositories/UserRepository';
+import { projectRepository } from '@/repositories/ProjectRepository';
 
 /**
  * Service for activity logging and analytics
@@ -92,14 +92,19 @@ class ActivityLogService {
     userId: string,
     issueId: string,
     assigneeId: string,
-    assigneeName: string
+    assigneeName: string,
+    reason?: string
   ): Promise<void> {
     await this.logActivity({
       user_id: userId,
       action_type: ActivityActionType.ISSUE_ASSIGNED,
       resource_type: ResourceType.ISSUE,
       resource_id: issueId,
-      details: { assignee_id: assigneeId, assignee_name: assigneeName },
+      details: {
+        assignee_id: assigneeId,
+        assignee_name: assigneeName,
+        ...(reason && { reason }),
+      },
     });
   }
 

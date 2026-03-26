@@ -20,6 +20,8 @@ export default function EditIssuePage({
   const [error, setError] = useState('');
   const [projects, setProjects] = useState<Array<{ id: string; name: string }>>([]);
   const [users, setUsers] = useState<Array<{ id: string; name: string; email: string }>>([]);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; role: string } | null>(null);
+  const [originalIssue, setOriginalIssue] = useState<any>(null);
   const [formData, setFormData] = useState({
     project_id: '',
     title: '',
@@ -37,16 +39,18 @@ export default function EditIssuePage({
         const resolvedParams = await params;
         setIssueId(resolvedParams.id);
 
-        // Fetch issue, projects, and users in parallel
-        const [issueRes, projectsRes, usersRes] = await Promise.all([
+        // Fetch issue, projects, users, and current user in parallel
+        const [issueRes, projectsRes, usersRes, sessionRes] = await Promise.all([
           fetch(`/api/issues/${resolvedParams.id}`),
           fetch('/api/projects'),
           fetch('/api/users'),
+          fetch('/api/auth/session'),
         ]);
 
         const issueData = await issueRes.json();
         const projectsData = await projectsRes.json();
         const usersData = await usersRes.json();
+        const sessionData = await sessionRes.json();
 
         if (!issueData.success) {
           throw new Error(issueData.error || 'Failed to load issue');
@@ -60,8 +64,13 @@ export default function EditIssuePage({
           setUsers(usersData.data);
         }
 
+        if (sessionData.success && sessionData.data) {
+          setCurrentUser(sessionData.data);
+        }
+
         // Pre-populate form with existing issue data
         const issue = issueData.data;
+        setOriginalIssue(issue);
         setFormData({
           project_id: issue.project_id || '',
           title: issue.title || '',
@@ -233,17 +242,50 @@ export default function EditIssuePage({
                 />
               </div>
 
-              <Select
-                label="Assignee (Optional)"
-                options={[
-                  { value: '', label: 'Unassigned' },
-                  ...users.map((u) => ({ value: u.id, label: `${u.name} (${u.email})` })),
-                ]}
-                value={formData.assignee_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, assignee_id: e.target.value })
-                }
-              />
+              <div>
+                <Select
+                  label="Assignee"
+                  options={
+                    currentUser?.role === 'admin' || currentUser?.role === 'manager'
+                      ? [
+                          { value: '', label: 'Unassigned (Auto-assign to reporter)' },
+                          ...users.map((u) => ({ value: u.id, label: `${u.name} (${u.email})` })),
+                        ]
+                      : [
+                          // Developers see limited options
+                          { value: '', label: 'Auto-assign to me' },
+                          ...(originalIssue?.reporter_id === currentUser?.id && currentUser
+                            ? [{ value: currentUser.id, label: `Me (${currentUser.name})` }]
+                            : []),
+                          // Show current assignee if it's someone else
+                          ...(formData.assignee_id && formData.assignee_id !== currentUser?.id
+                            ? users
+                                .filter((u) => u.id === formData.assignee_id)
+                                .map((u) => ({ value: u.id, label: `${u.name} (${u.email}) - Current` }))
+                            : []),
+                        ]
+                  }
+                  value={formData.assignee_id}
+                  onChange={(e) =>
+                    setFormData({ ...formData, assignee_id: e.target.value })
+                  }
+                  disabled={
+                    currentUser?.role === 'developer' &&
+                    originalIssue?.reporter_id !== currentUser?.id &&
+                    formData.assignee_id !== currentUser?.id
+                  }
+                />
+                {currentUser?.role === 'developer' && originalIssue?.reporter_id !== currentUser?.id && (
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                    ℹ️ Only managers can reassign issues. Contact your manager to change assignee.
+                  </p>
+                )}
+                {currentUser?.role === 'developer' && originalIssue?.reporter_id === currentUser?.id && (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    ✅ You can self-assign since you reported this issue
+                  </p>
+                )}
+              </div>
 
               <Select
                 label="Status"

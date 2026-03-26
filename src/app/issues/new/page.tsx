@@ -17,6 +17,9 @@ export default function NewIssuePage() {
   const [error, setError] = useState('');
   const [projects, setProjects] = useState<Array<{ id: string; name: string }>>([]);
   const [users, setUsers] = useState<Array<{ id: string; name: string; email: string }>>([]);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; role: string } | null>(null);
+  const [workloads, setWorkloads] = useState<Record<string, { total_issues: number; workload_score: number }>>({});
+  const [bestAvailable, setBestAvailable] = useState<{ id: string; name: string } | null>(null);
   const [formData, setFormData] = useState({
     project_id: projectId || '',
     title: '',
@@ -28,23 +31,56 @@ export default function NewIssuePage() {
     due_date: '',
   });
 
-  // Fetch projects and users on mount
+  // Fetch projects, users, current user session, and workload data on mount
   useEffect(() => {
     async function fetchData() {
       try {
-        const [projectsRes, usersRes] = await Promise.all([
+        const [projectsRes, usersRes, sessionRes, workloadRes] = await Promise.all([
           fetch('/api/projects'),
           fetch('/api/users'),
+          fetch('/api/auth/session'),
+          fetch('/api/workload'),
         ]);
 
         const projectsData = await projectsRes.json();
         const usersData = await usersRes.json();
+        const sessionData = await sessionRes.json();
+        const workloadData = await workloadRes.json();
 
         if (projectsData.success) {
           setProjects(projectsData.data);
         }
         if (usersData.success) {
           setUsers(usersData.data);
+        }
+        if (sessionData.success && sessionData.data) {
+          setCurrentUser(sessionData.data);
+          // Auto-select current user as assignee
+          setFormData(prev => ({
+            ...prev,
+            assignee_id: sessionData.data.id,
+          }));
+        }
+        if (workloadData.success && Array.isArray(workloadData.data)) {
+          // Build workload map
+          const workloadMap: Record<string, { total_issues: number; workload_score: number }> = {};
+          workloadData.data.forEach((w: any) => {
+            workloadMap[w.user_id] = {
+              total_issues: w.total_issues,
+              workload_score: w.workload_score,
+            };
+          });
+          setWorkloads(workloadMap);
+        }
+
+        // Fetch best available user
+        const bestAvailRes = await fetch('/api/workload?action=best-available');
+        const bestAvailData = await bestAvailRes.json();
+        if (bestAvailData.success && bestAvailData.data) {
+          setBestAvailable({
+            id: bestAvailData.data.user_id,
+            name: bestAvailData.data.user_name,
+          });
         }
       } catch (err) {
         console.error('Failed to fetch data:', err);
@@ -176,17 +212,58 @@ export default function NewIssuePage() {
                 />
               </div>
 
-              <Select
-                label="Assignee (Optional)"
-                options={[
-                  { value: '', label: 'Unassigned' },
-                  ...users.map((u) => ({ value: u.id, label: `${u.name} (${u.email})` })),
-                ]}
-                value={formData.assignee_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, assignee_id: e.target.value })
-                }
-              />
+              <div>
+                <Select
+                  label="Assignee"
+                  options={[
+                    { value: '', label: '✨ Assign to Me (Auto)' },
+                    ...(currentUser?.role === 'admin' || currentUser?.role === 'manager'
+                      ? bestAvailable
+                        ? [{
+                            value: 'best-available',
+                            label: `🎯 Best Available: ${bestAvailable.name} (Recommended)`,
+                          }]
+                        : []
+                      : []),
+                    ...users.map((u) => {
+                      const workload = workloads[u.id];
+                      const workloadText = workload
+                        ? ` [${workload.total_issues} issues${workload.workload_score > 15 ? ', busy' : workload.workload_score > 5 ? '' : ', available'}]`
+                        : '';
+                      const indicator = workload
+                        ? workload.workload_score <= 5
+                          ? '🟢'
+                          : workload.workload_score <= 15
+                          ? '🟡'
+                          : '🔴'
+                        : '⚪';
+                      return {
+                        value: u.id,
+                        label: `${indicator} ${u.name}${workloadText}`,
+                      };
+                    }),
+                  ]}
+                  value={formData.assignee_id === bestAvailable?.id ? 'best-available' : formData.assignee_id}
+                  onChange={(e) => {
+                    const value = e.target.value === 'best-available' ? bestAvailable?.id || '' : e.target.value;
+                    setFormData({ ...formData, assignee_id: value });
+                  }}
+                />
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {formData.assignee_id === ''
+                      ? '✨ Issue will be auto-assigned to you'
+                      : formData.assignee_id === bestAvailable?.id
+                      ? '🎯 Assigned to user with lowest workload'
+                      : formData.priority === 'high' || formData.priority === 'critical'
+                      ? '⚠️ High/Critical priority - ensure assignee can handle this'
+                      : 'Issue assigned to selected user'}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                    🟢 Available (≤5 issues) • 🟡 Balanced (6-15) • 🔴 Busy (&gt;15)
+                  </p>
+                </div>
+              </div>
 
               <Select
                 label="Status"

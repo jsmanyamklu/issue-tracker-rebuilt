@@ -438,7 +438,7 @@ interface MetricCardProps {
   title: string;
   value: string | number;
   icon: string;
-  color?: 'blue' | 'green' | 'yellow' | 'red';
+  color?: 'blue' | 'green' | 'yellow' | 'red' | 'gray';
 }
 
 function MetricCard({ title, value, icon, color = 'gray' }: MetricCardProps) {

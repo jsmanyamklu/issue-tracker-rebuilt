@@ -54,9 +54,14 @@ export default async function ProjectsPage() {
               Manage your projects and track issues
             </p>
           </div>
-          <Link href="/projects/new">
-            <Button>+ New Project</Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/projects/overview">
+              <Button variant="secondary">📊 View All Issues</Button>
+            </Link>
+            <Link href="/projects/new">
+              <Button>+ New Project</Button>
+            </Link>
+          </div>
         </div>
 
         {/* Projects Grid */}

@@ -17,12 +17,13 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      user: {
+      success: true,
+      data: {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
         role: session.user.role,
-        avatar_url: session.user.avatar_url,
+        avatar_url: (session.user as any).avatar_url || session.user.image || '',
       },
     });
   } catch (error) {

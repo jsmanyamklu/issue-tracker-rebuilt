@@ -48,9 +48,9 @@ export class IssueService {
   }
 
   /**
-   * Get issues by project ID
+   * Get issues by project ID with relations
    */
-  async getByProjectId(projectId: string): Promise<Issue[]> {
+  async getByProjectId(projectId: string): Promise<IssueWithRelations[]> {
     // Verify project exists
     const project = await projectRepository.findById(projectId);
     if (!project) {
@@ -74,9 +74,9 @@ export class IssueService {
   }
 
   /**
-   * Get issues reported by a user
+   * Get issues reported by a user with relations
    */
-  async getByReporterId(reporterId: string): Promise<Issue[]> {
+  async getByReporterId(reporterId: string): Promise<IssueWithRelations[]> {
     // Verify user exists
     const user = await userRepository.findById(reporterId);
     if (!user) {
@@ -116,17 +116,36 @@ export class IssueService {
       throw new ForbiddenError('You do not have permission to create issues');
     }
 
-    // Verify assignee exists if provided
-    if (data.assignee_id) {
+    // Track if issue was auto-assigned
+    let wasAutoAssigned = false;
+
+    // Auto-assign to reporter if no assignee provided
+    if (!data.assignee_id || data.assignee_id.trim() === '') {
+      data.assignee_id = data.reporter_id;
+      wasAutoAssigned = true;
+      console.log(`Auto-assigning issue to reporter: ${reporter.name} (${reporter.email})`);
+    } else {
+      // Verify assignee exists if explicitly provided
       const assignee = await userRepository.findById(data.assignee_id);
       if (!assignee) {
         throw new NotFoundError('Assignee user');
       }
 
-      // Check if reporter has permission to assign issues
-      if (!IssuePermissions.canAssign(reporter.role)) {
-        throw new ForbiddenError('You do not have permission to assign issues');
+      // Check if reporter has permission to assign issues to others
+      if (data.assignee_id !== data.reporter_id) {
+        if (!IssuePermissions.canAssign(reporter.role)) {
+          throw new ForbiddenError('You do not have permission to assign issues to others');
+        }
       }
+      // Developers can self-assign (handled by permission check below)
+    }
+
+    // Validation warning for high/critical priority issues
+    if ((data.priority === 'high' || data.priority === 'critical') && wasAutoAssigned) {
+      console.warn(
+        `Warning: High/Critical priority issue created without explicit assignee. ` +
+        `Auto-assigned to reporter ${reporter.name}. Title: "${data.title}"`
+      );
     }
 
     // Create the issue
@@ -140,8 +159,23 @@ export class IssueService {
         title: issue.title,
         project_id: issue.project_id,
         priority: issue.priority,
+        auto_assigned: wasAutoAssigned,
       }
     ).catch(err => console.error('Failed to log issue creation:', err));
+
+    // Log assignment if issue was assigned (either auto or explicit)
+    if (issue.assignee_id) {
+      const assignee = await userRepository.findById(issue.assignee_id);
+      if (assignee) {
+        await activityLogService.logIssueAssigned(
+          data.reporter_id,
+          issue.id,
+          issue.assignee_id,
+          assignee.name,
+          wasAutoAssigned ? 'auto-assigned to reporter' : undefined
+        ).catch(err => console.error('Failed to log assignment:', err));
+      }
+    }
 
     // Send Slack notification (async, non-blocking)
     const issueWithRelations = await issueRepository.findByIdWithRelations(issue.id);

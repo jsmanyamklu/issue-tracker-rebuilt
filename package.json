@@ -11,7 +11,12 @@
     "db:reset": "node scripts/db-reset.js",
     "db:seed": "node scripts/seed.js",
     "type-check": "tsc --noEmit",
-    "test:e2e": "node scripts/test-e2e.js"
+    "test:e2e": "node scripts/test-e2e.js",
+    "test": "ts-node tests/run-all-tests.ts",
+    "test:api": "ts-node tests/api-tests.ts",
+    "test:integration": "ts-node tests/integration-tests.ts",
+    "test:seed": "ts-node tests/seed-test-data.ts",
+    "fix:unassigned": "node scripts/fix-unassigned-issues.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
@@ -42,6 +47,7 @@
     "eslint-config-next": "^15.0.0",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "engines": {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -35,6 +35,7 @@ interface CurrentUser {
 
 export default function IssuesPage() {
   const searchParams = useSearchParams();
+
   const [issues, setIssues] = useState<Issue[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,91 +52,66 @@ export default function IssuesPage() {
   const [overdueFilter, setOverdueFilter] = useState<boolean>(searchParams.get('overdue') === 'true');
   const [users, setUsers] = useState<Array<{ id: string; name: string }>>([]);
 
-  // Load URL params and current user on mount
+  // Sync filter states with URL parameters whenever they change
   useEffect(() => {
-    loadCurrentUser();
-  }, []);
+    setStatusFilter(searchParams.get('status') || 'all');
+    setPriorityFilter(searchParams.get('priority') || 'all');
+    setProjectFilter(searchParams.get('project_id') || 'all');
+    setAssigneeFilter(searchParams.get('assignee_id') || 'all');
+    setScopeFilter(searchParams.get('scope') || 'all');
+    setOverdueFilter(searchParams.get('overdue') === 'true');
+  }, [searchParams]);
 
+  // Load current user and data
   useEffect(() => {
-    if (currentUser) {
-      loadData();
-    }
-  }, [statusFilter, priorityFilter, projectFilter, assigneeFilter, scopeFilter, currentUser]);
+    let mounted = true;
 
-  async function loadCurrentUser() {
-    try {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      if (data.user) {
-        setCurrentUser(data.user);
+    async function initialize() {
+      try {
+        // Load user first
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+
+        if (!mounted) return;
+
+        if (data.data) {
+          setCurrentUser(data.data);
+          // Once user is loaded, load all data
+          await loadData();
+        } else {
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('Failed to initialize:', err);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
-    } catch (err) {
-      console.error('Failed to load current user:', err);
     }
-  }
+
+    initialize();
+
+    return () => {
+      mounted = false;
+    };
+  }, [searchParams]); // Re-run when URL changes
+
 
   async function loadData() {
     setIsLoading(true);
     setError('');
 
     try {
-      // Build query params
-      const params = new URLSearchParams();
-
-      // Always apply basic filters
-      if (statusFilter !== 'all') {
-        params.append('status', statusFilter);
-      }
-      if (priorityFilter !== 'all') {
-        params.append('priority', priorityFilter);
-      }
-      if (projectFilter !== 'all') {
-        params.append('project_id', projectFilter);
-      }
-
-      // Apply scope and assignee filters
-      if (currentUser) {
-        const isAdminOrManager = currentUser.role === 'admin' || currentUser.role === 'manager';
-
-        // Scope filter takes precedence for user-specific filtering
-        if (scopeFilter === 'assigned') {
-          params.append('assignee_id', currentUser.id);
-        } else if (scopeFilter === 'reported') {
-          params.append('reporter_id', currentUser.id);
-        } else if (scopeFilter === 'my') {
-          params.append('user_id', currentUser.id);
-        } else {
-          // scopeFilter is 'all' - apply assignee dropdown filter
-          if (assigneeFilter !== 'all') {
-            if (assigneeFilter === 'unassigned') {
-              params.append('assignee_id', 'null');
-            } else {
-              params.append('assignee_id', assigneeFilter);
-            }
-          }
-        }
-      }
-
-      console.log('=== FILTER DEBUG ===');
-      console.log('User role:', currentUser?.role);
-      console.log('Filter states:', {
-        status: statusFilter,
-        priority: priorityFilter,
-        project: projectFilter,
-        assignee: assigneeFilter,
-        scope: scopeFilter
-      });
-      console.log('API params:', params.toString());
-      console.log('===================');
-
+      // Load ALL issues without any filters (for accurate stats)
+      // All filtering will be done client-side
       const [issuesRes, projectsRes, usersRes] = await Promise.all([
-        fetch(`/api/issues?${params.toString()}`),
+        fetch('/api/issues'), // No filters - load ALL issues
         fetch('/api/projects'),
         fetch('/api/users'),
       ]);
 
       if (!issuesRes.ok) {
-        const errorData = await issuesRes.json();
+        const errorData = await issuesRes.json().catch(() => ({ error: 'Unknown error' }));
         throw new Error(errorData.error || 'Failed to fetch issues');
       }
 
@@ -158,7 +134,26 @@ export default function IssuesPage() {
     }
   }
 
-  // Client-side search and overdue filtering
+  // Calculate stats
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const overdueIssues = issues.filter((i) =>
+    i.due_date &&
+    new Date(i.due_date) < today &&
+    i.status !== 'closed' &&
+    i.status !== 'resolved'
+  );
+
+  const stats = {
+    total: issues.length,
+    open: issues.filter((i) => i.status === 'open').length,
+    inProgress: issues.filter((i) => i.status === 'in_progress').length,
+    resolved: issues.filter((i) => i.status === 'resolved').length,
+    closed: issues.filter((i) => i.status === 'closed').length,
+    overdue: overdueIssues.length,
+  };
+
+  // Client-side filtering (ALL filters applied here)
   const filteredIssues = issues.filter((issue) => {
     // Search filter
     const matchesSearch = searchQuery === ''
@@ -167,6 +162,43 @@ export default function IssuesPage() {
         issue.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchesSearch) return false;
+
+    // Status filter
+    if (statusFilter !== 'all' && issue.status !== statusFilter) {
+      return false;
+    }
+
+    // Priority filter
+    if (priorityFilter !== 'all' && issue.priority !== priorityFilter) {
+      return false;
+    }
+
+    // Project filter
+    if (projectFilter !== 'all' && issue.project?.id !== projectFilter) {
+      return false;
+    }
+
+    // Assignee filter
+    if (assigneeFilter !== 'all') {
+      if (assigneeFilter === 'unassigned') {
+        if (issue.assignee !== null) return false;
+      } else {
+        if (issue.assignee?.id !== assigneeFilter) return false;
+      }
+    }
+
+    // Scope filter (for current user)
+    if (currentUser && scopeFilter !== 'all') {
+      if (scopeFilter === 'assigned') {
+        if (issue.assignee?.id !== currentUser.id) return false;
+      } else if (scopeFilter === 'reported') {
+        if (issue.reporter?.id !== currentUser.id) return false;
+      } else if (scopeFilter === 'my') {
+        if (issue.assignee?.id !== currentUser.id && issue.reporter?.id !== currentUser.id) {
+          return false;
+        }
+      }
+    }
 
     // Overdue filter
     if (overdueFilter) {
@@ -215,6 +247,98 @@ export default function IssuesPage() {
           <Link href="/issues/new">
             <Button>+ New Issue</Button>
           </Link>
+        </div>
+
+        {/* Stats - Clickable Filters */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+          <button
+            onClick={() => {
+              setStatusFilter('all');
+              setOverdueFilter(false);
+            }}
+            className="block w-full"
+          >
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'all' && !overdueFilter ? 'ring-2 ring-primary-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold">{stats.total}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Total</div>
+              </CardContent>
+            </Card>
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter('open');
+              setOverdueFilter(false);
+            }}
+            className="block w-full"
+          >
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'open' ? 'ring-2 ring-yellow-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-yellow-600">{stats.open}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Open</div>
+              </CardContent>
+            </Card>
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter('in_progress');
+              setOverdueFilter(false);
+            }}
+            className="block w-full"
+          >
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'in_progress' ? 'ring-2 ring-blue-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
+              </CardContent>
+            </Card>
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter('resolved');
+              setOverdueFilter(false);
+            }}
+            className="block w-full"
+          >
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'resolved' ? 'ring-2 ring-green-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Resolved</div>
+              </CardContent>
+            </Card>
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter('closed');
+              setOverdueFilter(false);
+            }}
+            className="block w-full"
+          >
+            <Card className={`cursor-pointer transition-all hover:shadow-lg ${statusFilter === 'closed' ? 'ring-2 ring-gray-500' : ''}`}>
+              <CardContent className="text-center py-4">
+                <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.closed}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Closed</div>
+              </CardContent>
+            </Card>
+          </button>
+          {stats.overdue > 0 && (
+            <button
+              onClick={() => {
+                setStatusFilter('all');
+                setOverdueFilter(true);
+              }}
+              className="block w-full"
+            >
+              <Card className={`cursor-pointer transition-all hover:shadow-lg border-2 border-red-500 dark:border-red-600 ${overdueFilter ? 'ring-2 ring-red-500' : ''}`}>
+                <CardContent className="text-center py-4">
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-500 animate-pulse">
+                    🚨 {stats.overdue}
+                  </div>
+                  <div className="text-sm text-red-700 dark:text-red-400 font-semibold">Overdue</div>
+                </CardContent>
+              </Card>
+            </button>
+          )}
         </div>
 
         {/* Filters */}
@@ -346,20 +470,59 @@ export default function IssuesPage() {
           </CardContent>
         </Card>
 
-        {/* Overdue Filter Indicator */}
-        {overdueFilter && (
-          <div className="mb-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
-              <span className="text-red-700 dark:text-red-400 font-semibold">🚨 Showing Overdue Issues Only</span>
+        {/* Active Filter Indicators */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {statusFilter !== 'all' && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+              <span className="text-blue-700 dark:text-blue-400 text-sm font-medium">
+                Status: {statusFilter === 'in_progress' ? 'In Progress' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+              </span>
               <button
-                onClick={() => setOverdueFilter(false)}
-                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium text-sm"
+                onClick={() => setStatusFilter('all')}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-bold"
               >
-                Clear
+                ×
               </button>
             </div>
-          </div>
-        )}
+          )}
+          {overdueFilter && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+              <span className="text-red-700 dark:text-red-400 text-sm font-semibold">🚨 Overdue Only</span>
+              <button
+                onClick={() => setOverdueFilter(false)}
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-bold"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          {priorityFilter !== 'all' && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700 rounded-lg">
+              <span className="text-purple-700 dark:text-purple-400 text-sm font-medium">
+                Priority: {priorityFilter.charAt(0).toUpperCase() + priorityFilter.slice(1)}
+              </span>
+              <button
+                onClick={() => setPriorityFilter('all')}
+                className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-bold"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          {projectFilter !== 'all' && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+              <span className="text-green-700 dark:text-green-400 text-sm font-medium">
+                Project: {projects.find(p => p.id === projectFilter)?.name || 'Unknown'}
+              </span>
+              <button
+                onClick={() => setProjectFilter('all')}
+                className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 font-bold"
+              >
+                ×
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Results Count */}
         <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">

@@ -1,4 +1,4 @@
-import pool from '@/lib/db';
+import { getPool } from '@/lib/db';
 import {
   ActivityLog,
   ActivityLogWithUser,
@@ -39,7 +39,7 @@ class ActivityLogRepository {
       data.user_agent || null,
     ];
 
-    const result = await pool.query<ActivityLog>(query, values);
+    const result = await getPool().query<ActivityLog>(query, values);
     return result.rows[0];
   }
 
@@ -113,7 +113,7 @@ class ActivityLogRepository {
       values.push(filters.offset);
     }
 
-    const result = await pool.query<ActivityLogWithUser>(query, values);
+    const result = await getPool().query<ActivityLogWithUser>(query, values);
     return result.rows;
   }
 
@@ -156,7 +156,7 @@ class ActivityLogRepository {
       paramCount++;
     }
 
-    const result = await pool.query(query, values);
+    const result = await getPool().query(query, values);
     return parseInt(result.rows[0].count, 10);
   }
 
@@ -244,7 +244,7 @@ class ActivityLogRepository {
 
     query += ` GROUP BY action_type ORDER BY count DESC`;
 
-    const result = await pool.query(query, values);
+    const result = await getPool().query(query, values);
     return result.rows;
   }
 
@@ -281,7 +281,7 @@ class ActivityLogRepository {
 
     query += ` GROUP BY u.id, u.name, u.email ORDER BY action_count DESC`;
 
-    const result = await pool.query(query, values);
+    const result = await getPool().query(query, values);
     return result.rows;
   }
 
@@ -314,7 +314,7 @@ class ActivityLogRepository {
 
     query += ` GROUP BY hour ORDER BY hour`;
 
-    const result = await pool.query(query, values);
+    const result = await getPool().query(query, values);
     return result.rows;
   }
 
@@ -347,7 +347,7 @@ class ActivityLogRepository {
 
     query += ` GROUP BY date ORDER BY date DESC`;
 
-    const result = await pool.query(query, values);
+    const result = await getPool().query(query, values);
     return result.rows;
   }
 
@@ -360,7 +360,7 @@ class ActivityLogRepository {
       WHERE created_at < NOW() - INTERVAL '${days} days'
     `;
 
-    const result = await pool.query(query);
+    const result = await getPool().query(query);
     return result.rowCount || 0;
   }
 }

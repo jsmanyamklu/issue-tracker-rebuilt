@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-03-26T07:18:19.414Z",
+  "summary": {
+    "total": 7,
+    "passed": 0,
+    "failed": 7,
+    "duration": 903
+  },
+  "tests": [
+    {
+      "test": "Workload score calculation accuracy",
+      "passed": false,
+      "message": "API returned 401",
+      "duration": 202
+    },
+    {
+      "test": "Best available user selection",
+      "passed": false,
+      "message": "Failed to fetch workloads",
+      "duration": 100
+    },
+    {
+      "test": "Workload distribution categories",
+      "passed": false,
+      "message": "API returned 401",
+      "duration": 72
+    },
+    {
+      "test": "Workload summary consistency",
+      "passed": false,
+      "message": "Failed to fetch workloads",
+      "duration": 65
+    },
+    {
+      "test": "Overdue issue detection",
+      "passed": false,
+      "message": "API returned 401",
+      "duration": 217
+    },
+    {
+      "test": "Overdue summary metrics",
+      "passed": false,
+      "message": "API returned 401",
+      "duration": 185
+    },
+    {
+      "test": "Overloaded users detection",
+      "passed": false,
+      "message": "API returned 401",
+      "duration": 62
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-03-26T07:18:15.859Z",
+  "summary": {
+    "total": 9,
+    "passed": 2,
+    "failed": 7,
+    "duration": 2145
+  },
+  "tests": [
+    {
+      "test": "GET /api/workload (all workloads)",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 1030
+    },
+    {
+      "test": "GET /api/workload?action=summary",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 49
+    },
+    {
+      "test": "GET /api/workload?action=distribution",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 67
+    },
+    {
+      "test": "GET /api/workload?action=best-available",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 52
+    },
+    {
+      "test": "GET /api/workload?action=overloaded",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 49
+    },
+    {
+      "test": "GET /api/notifications/overdue",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 785
+    },
+    {
+      "test": "GET /api/notifications/overdue?action=summary",
+      "passed": false,
+      "message": "HTTP 401: You must be signed in to access this resource",
+      "duration": 113
+    },
+    {
+      "test": "Auto-assignment on issue creation",
+      "passed": true,
+      "message": "Skipped - requires authentication and project setup",
+      "duration": 0
+    },
+    {
+      "test": "Issue reassignment",
+      "passed": true,
+      "message": "Skipped - requires authentication and issue setup",
+      "duration": 0
+    }
+  ]
+}

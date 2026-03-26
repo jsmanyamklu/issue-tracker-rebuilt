@@ -78,15 +78,19 @@ export default function NewProjectPage() {
                 rows={4}
               />
 
-              <Input
-                label="Project Deadline (Optional)"
-                type="datetime-local"
-                value={formData.due_date}
-                onChange={(e) =>
-                  setFormData({ ...formData, due_date: e.target.value })
-                }
-                helperText="Overall project completion target date"
-              />
+              <div>
+                <Input
+                  label="Project Deadline (Optional)"
+                  type="datetime-local"
+                  value={formData.due_date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, due_date: e.target.value })
+                  }
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Overall project completion target date
+                </p>
+              </div>
 
               <div className="flex gap-4">
                 <Button type="submit" isLoading={isLoading}>
